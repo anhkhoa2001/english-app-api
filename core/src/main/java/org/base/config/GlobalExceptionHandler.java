@@ -1,7 +1,7 @@
 package org.base.config;
 
 import org.base.dto.common.MessageResponseDTO;
-import org.base.exception.LogicException;
+import org.base.exception.SystemException;
 import org.base.exception.ValidationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ControllerAdvice;
@@ -12,9 +12,9 @@ import org.springframework.web.context.request.WebRequest;
 @ControllerAdvice
 public class GlobalExceptionHandler {
 
-    @ExceptionHandler(value = {LogicException.class})
+    @ExceptionHandler(value = {SystemException.class})
     @ResponseStatus(value = HttpStatus.INTERNAL_SERVER_ERROR)
-    public MessageResponseDTO resourceLogicException(LogicException ex, WebRequest request) {
+    public MessageResponseDTO resourceLogicException(SystemException ex, WebRequest request) {
         MessageResponseDTO response = new MessageResponseDTO(HttpStatus.INTERNAL_SERVER_ERROR.value(),
                             ex.getMessage(), null, request.getDescription(false));
 

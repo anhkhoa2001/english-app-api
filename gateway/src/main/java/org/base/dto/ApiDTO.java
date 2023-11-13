@@ -1,0 +1,14 @@
+package org.base.dto;
+
+import lombok.Data;
+
+@Data
+public class ApiDTO {
+
+    private String path;
+    private String service;
+    //true la can token
+    //false la khong can
+    private boolean isAuth;
+    private String method;
+}
