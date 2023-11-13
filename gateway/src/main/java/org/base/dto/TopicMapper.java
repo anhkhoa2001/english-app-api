@@ -5,6 +5,6 @@ import lombok.Data;
 @Data
 public class TopicMapper {
 
-    private String path;
-    private String method;
+    private String to;
+    private String from;
 }

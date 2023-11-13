@@ -9,6 +9,6 @@ public class ApiDTO {
     private String service;
     //true la can token
     //false la khong can
-    private boolean isAuth;
+    private boolean auth;
     private String method;
 }

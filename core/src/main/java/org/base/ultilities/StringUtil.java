@@ -15,6 +15,10 @@ public class StringUtil {
         return input != null && !input.isEmpty();
     }
 
+    public static boolean isObject(Object object) {
+        return object != null;
+    }
+
     public static String generatorCurrentDateTime() {
         LocalDateTime currentTime = LocalDateTime.now();
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern(Constants.FORMAT_TIME.DATE_TIME);

@@ -1,25 +1,31 @@
 package org.base.controller;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.base.config.GatewayConfig;
+import org.base.dto.ApiDTO;
+import org.base.dto.TopicMapper;
+import org.base.dto.common.MessageRequestDTO;
+import org.base.exception.SystemException;
+import org.base.ultilities.Constants;
 import org.base.ultilities.StringUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.util.Map;
 
 @RestController
 @RequestMapping(value = "/api")
 @Slf4j
 public class GatewayController {
+
+    @Autowired
+    private KafkaTemplate<String, Object> kafkaTemplate;
 
     //GET
     @RequestMapping(value = "**", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
@@ -66,9 +72,8 @@ public class GatewayController {
     }
 
 
-
-    public ResponseEntity<String> processRequest(String requestMethod, Map<String, String> urlParamMap,
-                                                 Map<String, Object> bodyParamMap, Map<String, String> headerParamMap,
+    public ResponseEntity<String> processRequest(String requestMethod, Map<String, String> urlParams,
+                                                 Map<String, Object> body, Map<String, String> header,
                                                  HttpServletRequest req) throws JsonProcessingException {
         //Get all value
         String requestPath = req.getRequestURI();
@@ -95,17 +100,15 @@ public class GatewayController {
 
         //Log request info
         log.info("[{}] to requestPath: {} - urlParam: {} - pathParm: {} - bodyParam: {} - headerParam: {}",
-                requestMethod, requestPath, urlParamMap, pathParam, bodyParamMap, headerParamMap);
+                requestMethod, requestPath, urlParams, pathParam, body, header);
         //log to db
 
 
         //Validate url
-        /*String invalidData = new GatewayValidation().validate(requestPath, service, requestMethod);
+        String message = GatewayConfig.validate(requestPath, service, requestMethod);
 
-        if (invalidData != null) {
-            ResponseMessage responseMessage = new ResponseMessage(HttpStatus.BAD_REQUEST.value(), invalidData, null);
-            String result = responseMessage.toJsonString();
-            return new ResponseEntity(result, HttpStatus.BAD_REQUEST);
+        if (message != null) {
+            throw new SystemException(message);
         } else {
             requestPath = requestPath.contains(GatewayConfig.API_ROOT_PATH)
                     ? requestPath.replace(GatewayConfig.API_ROOT_PATH, "/") : requestPath;
@@ -113,66 +116,26 @@ public class GatewayController {
             String result = null;
 
             //Get rabbit type from url
-            String rabbitType = GatewayConfig.SERVICE_PATH_MAP.get(requestPath + "  " + requestMethod).getRabbit_type();
-            RequestMessage request = new RequestMessage(requestMethod, requestPath,
-                    urlParamMap, pathParam, bodyParamMap, headerParamMap);
-            log.info("Get Rabbit type for {} {} ==> Rabbit: {}", requestMethod,
-                    requestPath.replace(GatewayConfig.API_ROOT_PATH, "/"), rabbitType);
-            if ("rpc".equalsIgnoreCase(rabbitType)) {
-                String rpcQueue = GatewayConfig.SERVICE_MAP.get(service + ".rpc.queue");
-                String rpcExchange = GatewayConfig.SERVICE_MAP.get(service + ".rpc.exchange");
-                String rpcKey = GatewayConfig.SERVICE_MAP.get(service + ".rpc.key");
-                if (StringUtil.isNullOrEmpty(rpcQueue) || StringUtil.isNullOrEmpty(rpcExchange) || StringUtil.isNullOrEmpty(rpcKey)) {
-                    throw new RuntimeException("Không tìm thấy rabbit mq cho service " + service);
-                }
-                result = rabbitMQClient.callRpcService(rpcExchange, rpcQueue, rpcKey, request.toJsonString());
+            ApiDTO api = GatewayConfig.MAPPING_SERVICE_PATH.getOrDefault(requestPath + Constants.TEMPLE_SPLIT + requestMethod, null);
+            if(StringUtil.isObject(api)) {
+                MessageRequestDTO request = new MessageRequestDTO(requestMethod, requestPath,
+                        urlParams, pathParam, body, header);
+                TopicMapper topicMapper = GatewayConfig.MAPPING_SERVICE_TOPIC.get(api.getService());
 
-                log.info("result: " + result);
-            } else if ("worker".equalsIgnoreCase(rabbitType)) {
-                String workerQueue = GatewayConfig.SERVICE_MAP.get(service + ".worker.queue");
-                if (StringUtil.isNullOrEmpty(workerQueue)) {
-                    throw new RuntimeException("Không tìm thấy rabbit mq cho service " + service);
-                }
-                //Call worker
-                if (rabbitMQClient.callWorkerService(workerQueue, request.toJsonString())) {
-                    MessageContent mc = new MessageContent(HttpStatus.OK.value(), HttpStatus.OK.toString(), "OK");
-                    ResponseMessage responseMessage = new ResponseMessage(mc);
-                    result = responseMessage.toJsonString();
+                if(StringUtil.isObject(topicMapper)) {
+                    sendToKafka(topicMapper.getTo(), request);
                 } else {
-                    MessageContent mc = new MessageContent(HttpStatus.INTERNAL_SERVER_ERROR.value(),
-                            HttpStatus.INTERNAL_SERVER_ERROR.toString(), null);
-                    ResponseMessage responseMessage = new ResponseMessage(mc);
-                    result = responseMessage.toJsonString();
-                }
-            } else if ("publish".equalsIgnoreCase(rabbitType)) {
-                String directExchange = GatewayConfig.SERVICE_MAP.get(service + ".direct.exchange");
-                String directKey = GatewayConfig.SERVICE_MAP.get(service + ".direct.key");
-                if (StringUtil.isNullOrEmpty(directExchange) || StringUtil.isNullOrEmpty(directKey)) {
-                    throw new RuntimeException("Không tìm thấy rabbit mq cho service " + service);
-                }
-                //Call publisher
-                if (rabbitMQClient.callPublishService(directExchange, directKey, request.toJsonString())) {
-                    MessageContent mc = new MessageContent(HttpStatus.OK.value(), HttpStatus.OK.toString(), "OK");
-                    ResponseMessage responseMessage = new ResponseMessage(HttpStatus.OK.value(), HttpStatus.OK.toString(), mc);
-                    result = responseMessage.toJsonString();
-                } else {
-                    MessageContent mc = new MessageContent(HttpStatus.INTERNAL_SERVER_ERROR.value(), HttpStatus.INTERNAL_SERVER_ERROR.toString(), null);
-                    ResponseMessage responseMessage = new ResponseMessage(mc);
-                    result = responseMessage.toJsonString();
+                    throw new SystemException("TopicMapper invalid");
                 }
             }
-
             //return
-            if (result != null) {
-                ObjectMapper mapper = new ObjectMapper();
-                DateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-                mapper.setDateFormat(df);
-                ResponseMessage response = mapper.readValue(result, ResponseMessage.class);
-                return new ResponseEntity(response.getData(), HttpStatus.valueOf(response.getStatus()));
-            }
-            ResponseMessage responseMessage = new ResponseMessage(HttpStatus.INTERNAL_SERVER_ERROR.value(), HttpStatus.INTERNAL_SERVER_ERROR.toString(), null);
-            result = responseMessage.toJsonString();
-            return new ResponseEntity<>(result, HttpStatus.INTERNAL_SERVER_ERROR);*/
-            return null;
+            return new ResponseEntity<>(result, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
+
+    public void sendToKafka(String topic, MessageRequestDTO request) {
+        kafkaTemplate.send(topic, request);
+
+        log.info("Send to topic |{}| kafka {} ==>", topic,  request);
+    }
+}

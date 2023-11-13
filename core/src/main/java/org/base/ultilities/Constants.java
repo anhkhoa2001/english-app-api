@@ -9,4 +9,15 @@ public class Constants {
     }
 
     public static final String TOKEN_TYPE = "Bearer ";
+
+    public static final String TEMPLE_SPLIT = "|!@#$%^&*()|";
+
+    public interface SERVICE {
+        String USER = "user";
+        String CONVERSATION = "conversation";
+        String COURSE = "course";
+        String BLOG = "blog";
+        String EXAM = "exam";
+        String DOCHUB = "dochub";
+    }
 }

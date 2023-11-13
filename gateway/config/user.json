@@ -1,8 +1,8 @@
 [
   {
     "path": "/user/get-all",
-    "service": "user",
-    "method": "post",
-    "isAuth": "true"
+    "topic": "service",
+    "auth": true,
+    "method": "post"
   }
 ]

@@ -1,8 +1,0 @@
-[
-  {
-    "path": "/user/get-all",
-    "service": "user",
-    "method": "post",
-    "isAuth": "true"
-  }
-]
