@@ -6,14 +6,12 @@ import lombok.extern.slf4j.Slf4j;
 import org.base.dto.ApiDTO;
 import org.base.dto.TopicMapper;
 import org.base.exception.SystemException;
-import org.base.ultilities.Constants;
-import org.base.ultilities.StringUtil;
-import org.springframework.beans.factory.annotation.Value;
+import org.base.utils.Constants;
+import org.base.utils.StringUtil;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
 import java.io.*;
-import java.security.spec.PKCS8EncodedKeySpec;
 import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -35,40 +33,21 @@ public class GatewayConfig {
     private void loadConfig() {
         try {
             log.info("======= Loading Services... =======");
-            SERVICE_LIST.add(Constants.SERVICE.EXAM);
-            SERVICE_LIST.add(Constants.SERVICE.CONVERSATION);
-            SERVICE_LIST.add(Constants.SERVICE.BLOG);
-            SERVICE_LIST.add(Constants.SERVICE.USER);
-            SERVICE_LIST.add(Constants.SERVICE.DOCHUB);
-            SERVICE_LIST.add(Constants.SERVICE.COURSE);
+            SERVICE_LIST.add(Constants.SERVICE.EXAM.NAME);
+            SERVICE_LIST.add(Constants.SERVICE.CONVERSATION.NAME);
+            SERVICE_LIST.add(Constants.SERVICE.BLOG.NAME);
+            SERVICE_LIST.add(Constants.SERVICE.USER.NAME);
+            SERVICE_LIST.add(Constants.SERVICE.DOCHUB.NAME);
+            SERVICE_LIST.add(Constants.SERVICE.COURSE.NAME);
 
             log.info("======= Loading GatewayConfig config... =======");
-            Properties properties = new Properties();
-            properties.load(new InputStreamReader(new FileInputStream(CONFIG_DIR + "gateway.properties"), "UTF-8"));
-            Enumeration<?> e = properties.propertyNames();
 
-            while (e.hasMoreElements()) {
-                String key = (String) e.nextElement();
-                String value = properties.getProperty(key);
-
-                System.out.println("+ key: " + key + " => value: " + value);
-                if(key.contains("topic")) {
-                    String service = key.split("\\.")[1];
-                    String topicTo, topicFrom;
-                    if(SERVICE_LIST.contains(service)) {
-                        TopicMapper mapper = MAPPING_SERVICE_TOPIC.getOrDefault(service, new TopicMapper());
-                        if(key.contains("from")) {
-                            mapper.setFrom(value);
-                        } else {
-                            mapper.setTo(value);
-                        }
-                        MAPPING_SERVICE_TOPIC.put(service, mapper);
-                    }
-                }
+            for(String service : SERVICE_LIST) {
+                loadAPIJson(service);
             }
             log.info("Mapping service topic {}", MAPPING_SERVICE_TOPIC);
             System.out.println("=== Load GatewayConfig config successfull!!! ===");
-        } catch (IOException ex) {
+        } catch (Exception ex) {
             Logger.getLogger(GatewayConfig.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
@@ -78,17 +57,20 @@ public class GatewayConfig {
             FileReader reader = new FileReader(CONFIG_DIR + jsonFile + ".json");
             ObjectMapper mapper = new ObjectMapper();
             List<ApiDTO> apis = mapper.readValue(reader, new TypeReference<List<ApiDTO>>() {});
-            if (!StringUtil.isListEmpty(apis)) {
-                apis.forEach((tmp) -> {
+            if (StringUtil.isListEmpty(apis)) {
+                apis.forEach(tmp -> {
+                    tmp.setMethod(tmp.getMethod().toUpperCase());
                     MAPPING_SERVICE_PATH.put(tmp.getPath() + Constants.TEMPLE_SPLIT + tmp.getMethod(), tmp);
                 });
             }
+
+            log.info("Load Mapping service Path successfull in service {} !!! {}", jsonFile,  MAPPING_SERVICE_PATH);
         } catch (FileNotFoundException ex) {
             ex.printStackTrace();
-            throw new SystemException("File gateway.properties bị lỗi!!");
+            throw new SystemException("File gateway.properties has error!!");
         } catch (IOException ex) {
             ex.printStackTrace();
-            throw new SystemException("Lấy data từ file gateway.properties bị lỗi!!");
+            throw new SystemException("Get data from file "+ jsonFile +".json error!!");
         }
     }
 
@@ -115,7 +97,6 @@ public class GatewayConfig {
         }
 
         //check them request path
-
         return null;
     }
 }

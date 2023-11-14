@@ -1,0 +1,61 @@
+package org.base.utils;
+
+public class Constants {
+
+    public interface FORMAT_TIME {
+        String DATE_TIME = "HH:mm:ss dd/MM/yyyy";
+
+        String TIME = "dd/MM/yyyy";
+    }
+
+    public static final String TOKEN_TYPE = "Bearer ";
+
+    public static final String TEMPLE_SPLIT = "|!@#$%^&*()|";
+
+    public interface SERVICE {
+
+        interface  USER {
+            String NAME = "user";
+            String TO = "topic-user-to";
+
+            String FROM = "topic-user-from";
+        }
+
+        interface  DOCHUB {
+            String NAME = "dochub";
+            String TO = "topic-dochub-to";
+
+            String FROM = "topic-dochub-from";
+        }
+
+        interface  CONVERSATION {
+            String NAME = "conversation";
+            String TO = "topic-conversation-to";
+
+            String FROM = "topic-conversation-from";
+        }
+
+        interface  COURSE {
+            String NAME = "course";
+            String TO = "topic-course-to";
+
+            String FROM = "topic-course-from";
+        }
+
+        interface  BLOG {
+            String NAME = "blog";
+            String TO = "topic-blog-to";
+
+            String FROM = "topic-blog-from";
+        }
+
+        interface  EXAM {
+            String NAME = "exam";
+            String TO = "topic-exam-to";
+
+            String FROM = "topic-exam-from";
+        }
+    }
+
+
+}

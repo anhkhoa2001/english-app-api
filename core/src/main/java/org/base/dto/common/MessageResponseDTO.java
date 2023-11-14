@@ -3,9 +3,8 @@ package org.base.dto.common;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.NoArgsConstructor;
 import org.base.dto.AItemDTO;
-import org.base.ultilities.StringUtil;
+import org.base.utils.StringUtil;
 import org.springframework.http.HttpStatus;
 
 import java.util.List;

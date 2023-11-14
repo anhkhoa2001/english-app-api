@@ -3,7 +3,7 @@ package org.base.converter;
 import org.base.dto.AItemDTO;
 import org.base.exception.SystemException;
 import org.base.model.AItemModel;
-import org.base.ultilities.StringUtil;
+import org.base.utils.StringUtil;
 import org.springframework.http.HttpStatus;
 
 import java.util.List;

@@ -1,0 +1,25 @@
+kafka:
+  properties:
+    bootstrap:
+      servers: localhost:9092
+  gateway:
+    group_id: englist-socket
+
+
+
+server:
+  port: 9001
+
+spring:
+  datasource:
+    password: 1
+    url: jdbc:postgresql://localhost:5432/user_service?currentSchema=user
+    username: khoadt
+  jpa:
+    hibernate:
+      ddl-auto: validate
+      naming:
+        implicit-strategy: org.hibernate.boot.model.naming.ImplicitNamingStrategyLegacyJpaImpl
+        physical-strategy: org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
+    show-sql: true

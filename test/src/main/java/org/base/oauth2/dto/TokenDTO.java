@@ -2,7 +2,7 @@ package org.base.oauth2.dto;
 
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
-import org.base.ultilities.Constants;
+import org.base.utils.Constants;
 
 import java.util.Date;
 

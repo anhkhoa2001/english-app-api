@@ -6,7 +6,7 @@ import lombok.Data;
 public class ApiDTO {
 
     private String path;
-    private String service;
+    private String topic;
     //true la can token
     //false la khong can
     private boolean auth;

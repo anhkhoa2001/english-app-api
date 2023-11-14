@@ -1,4 +1,4 @@
-package org.base.ultilities;
+package org.base.utils;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
