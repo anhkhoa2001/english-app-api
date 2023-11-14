@@ -12,6 +12,7 @@ import org.springframework.web.context.request.WebRequest;
 @ControllerAdvice
 public class GlobalExceptionHandler {
 
+
     @ExceptionHandler(value = {SystemException.class})
     @ResponseStatus(value = HttpStatus.INTERNAL_SERVER_ERROR)
     public MessageResponseDTO resourceLogicException(SystemException ex, WebRequest request) {
