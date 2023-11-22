@@ -2,10 +2,7 @@ package org.base.model;
 
 import lombok.Data;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import javax.persistence.*;
 import java.util.Date;
 
 @Data
@@ -18,6 +15,7 @@ public class UserModel {
     private String userId;
 
     @Column(name = "CREATE_AT")
+    @Temporal(TemporalType.TIMESTAMP)
     private Date createAt;
 
     @Column(name = "USERNAME")

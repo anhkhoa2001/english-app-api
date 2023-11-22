@@ -8,6 +8,11 @@ public class Constants {
         String TIME = "dd/MM/yyyy";
     }
 
+    public interface TYPE_LOGIN {
+        String GOOGLE = "GOOGLE";
+        String GITHUB = "GITHUB";
+    }
+
     public static final String TOKEN_TYPE = "Bearer ";
 
     public static final String TEMPLE_SPLIT = "|!@#$%^&*()|";

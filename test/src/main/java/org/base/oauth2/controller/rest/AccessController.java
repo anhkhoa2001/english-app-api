@@ -1,28 +1,11 @@
 package org.base.oauth2.controller.rest;
 
 import lombok.extern.slf4j.Slf4j;
-import org.base.config.EnableWrapResponse;
 import org.base.oauth2.config.JwtTokenSetup;
-import org.base.oauth2.dto.TokenDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.security.core.context.SecurityContext;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.oauth2.core.user.DefaultOAuth2User;
-import org.springframework.security.oauth2.core.user.OAuth2User;
-import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.servlet.view.RedirectView;
-
-import javax.validation.Valid;
-import java.net.URI;
 
 @RestController
 @Slf4j
@@ -39,7 +22,7 @@ public class AccessController {
         this.jwtTokenSetup = jwtTokenSetup;
     }
 
-    @GetMapping("/get-token")
+    /*@GetMapping("/get-token")
     public ResponseEntity getToken(@Valid @RequestParam String account) {
         SecurityContext context = SecurityContextHolder.getContext();
         Authentication authentication = context.getAuthentication();
@@ -80,5 +63,5 @@ public class AccessController {
         return ResponseEntity.status(HttpStatus.FOUND)
                 .location(URI.create(googleUrl))
                 .build();
-    }
+    }*/
 }

@@ -25,19 +25,14 @@
             <optional>true</optional>
         </dependency>
 
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-actuator</artifactId>
-        </dependency>
-
         <!--        CORS-->
 
         <!--        oauth2 config-->
 
-        <dependency>
+        <!--<dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-oauth2-client</artifactId>
-        </dependency>
+        </dependency>-->
 
         <dependency>
             <groupId>org.springframework.boot</groupId>
@@ -77,16 +72,6 @@
         </dependency>
         <!-- end: config simplemail -->
 
-
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-thymeleaf</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-devtools</artifactId>
-        </dependency>
-
         <dependency>
             <groupId>org.java-websocket</groupId>
             <artifactId>Java-WebSocket</artifactId>
@@ -100,4 +85,42 @@
             <version>2.8.0</version>
         </dependency>
     </dependencies>
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-maven-plugin</artifactId>
+                <version>2.7.6</version>
+            </plugin>
+        </plugins>
+        <pluginManagement>
+            <plugins>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>spring-boot-maven-plugin</artifactId>
+                    <version>2.7.6</version>
+                    <executions>
+                        <execution>
+                            <phase>package</phase>
+                            <goals>
+                                <goal>repackage</goal>
+                            </goals>
+                            <configuration>
+                                <archive>
+                                    <manifest>
+                                        <mainClass>
+                                            org.base.TestApplication
+                                        </mainClass>
+                                    </manifest>
+                                </archive>
+                                <descriptorRefs>
+                                    <descriptorRef>jar-with-dependencies</descriptorRef>
+                                </descriptorRefs>
+                            </configuration>
+                        </execution>
+                    </executions>
+                </plugin>
+            </plugins>
+        </pluginManagement>
+    </build>
 </project>

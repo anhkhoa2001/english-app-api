@@ -1,11 +1,6 @@
 server.port: 9999
 
-spring.thymeleaf.prefix: classpath:/static
-spring.thymeleaf.suffix: .html
-
 spring.mvc.pathmatch.matching-strategy: ant_path_matcher
-
-spring.devtools.restart.enabled: false
 
 
 #GITHUB

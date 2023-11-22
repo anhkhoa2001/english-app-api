@@ -1,5 +1,6 @@
 package org.base.services.impl;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.base.services.SendService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,7 +21,7 @@ public class SendServiceImpl implements SendService {
 
 
     @Override
-    public void pushToTopic(String topic, Object request) throws Exception {
+    public void pushToTopic(String topic, Object request) throws JsonProcessingException {
         String content = mapper.writeValueAsString(request);
         kafkaTemplate.send(topic, content);
     }

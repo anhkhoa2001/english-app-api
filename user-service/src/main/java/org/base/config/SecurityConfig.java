@@ -19,7 +19,7 @@ public class SecurityConfig {
     SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http.csrf().disable()
                 .authorizeRequests(auth -> {
-                    auth.antMatchers("/public/**", "/login", "/access/user", "/favicon.ico").permitAll();
+                    auth.antMatchers("/public/**", "/access/user", "/favicon.ico").permitAll();
                     auth.anyRequest().authenticated();
                 })
                 .oauth2Login()

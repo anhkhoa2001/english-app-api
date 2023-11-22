@@ -40,7 +40,43 @@ public class GatewayConfig {
             SERVICE_LIST.add(Constants.SERVICE.DOCHUB.NAME);
             SERVICE_LIST.add(Constants.SERVICE.COURSE.NAME);
 
-            log.info("======= Loading GatewayConfig config... =======");
+            log.info("======= Loading Mapping Service Topic config... =======");
+
+            //user
+            TopicMapper topicMapper = new TopicMapper();
+            topicMapper.setTo(Constants.SERVICE.USER.TO);
+            topicMapper.setFrom(Constants.SERVICE.USER.FROM);
+            MAPPING_SERVICE_TOPIC.put(Constants.SERVICE.USER.NAME, topicMapper);
+
+            //exam
+            topicMapper = new TopicMapper();
+            topicMapper.setTo(Constants.SERVICE.EXAM.TO);
+            topicMapper.setFrom(Constants.SERVICE.EXAM.FROM);
+            MAPPING_SERVICE_TOPIC.put(Constants.SERVICE.EXAM.NAME, topicMapper);
+
+            //dochub
+            topicMapper = new TopicMapper();
+            topicMapper.setTo(Constants.SERVICE.DOCHUB.TO);
+            topicMapper.setFrom(Constants.SERVICE.DOCHUB.FROM);
+            MAPPING_SERVICE_TOPIC.put(Constants.SERVICE.DOCHUB.NAME, topicMapper);
+
+            //COURSE
+            topicMapper = new TopicMapper();
+            topicMapper.setTo(Constants.SERVICE.COURSE.TO);
+            topicMapper.setFrom(Constants.SERVICE.COURSE.FROM);
+            MAPPING_SERVICE_TOPIC.put(Constants.SERVICE.COURSE.NAME, topicMapper);
+
+            //CONVERSATION
+            topicMapper = new TopicMapper();
+            topicMapper.setTo(Constants.SERVICE.CONVERSATION.TO);
+            topicMapper.setFrom(Constants.SERVICE.CONVERSATION.FROM);
+            MAPPING_SERVICE_TOPIC.put(Constants.SERVICE.CONVERSATION.NAME, topicMapper);
+
+            //BLOG
+            topicMapper = new TopicMapper();
+            topicMapper.setTo(Constants.SERVICE.BLOG.TO);
+            topicMapper.setFrom(Constants.SERVICE.BLOG.FROM);
+            MAPPING_SERVICE_TOPIC.put(Constants.SERVICE.BLOG.NAME, topicMapper);
 
             for(String service : SERVICE_LIST) {
                 loadAPIJson(service);

@@ -1,23 +1,38 @@
 package org.base.controller;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.kafka.clients.consumer.Consumer;
+import org.apache.kafka.clients.consumer.ConsumerRecords;
 import org.base.config.EnableWrapResponse;
 import org.base.config.GatewayConfig;
 import org.base.dto.ApiDTO;
 import org.base.dto.TopicMapper;
 import org.base.dto.common.MessageRequestDTO;
 import org.base.exception.SystemException;
-import org.base.services.SendService;
 import org.base.utils.Constants;
 import org.base.utils.StringUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.kafka.config.ConcurrentKafkaListenerContainerFactory;
+import org.springframework.kafka.config.KafkaListenerContainerFactory;
+import org.springframework.kafka.core.ConsumerFactory;
+import org.springframework.kafka.core.DefaultKafkaConsumerFactory;
+import org.springframework.kafka.core.KafkaTemplate;
+import org.springframework.kafka.listener.ConcurrentMessageListenerContainer;
+import org.springframework.kafka.listener.MessageListener;
+import org.springframework.kafka.support.SendResult;
+import org.springframework.util.concurrent.ListenableFuture;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
+import java.time.Duration;
+import java.util.Collections;
 import java.util.Map;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.TimeUnit;
 
 @RestController
 @RequestMapping("/api")
@@ -25,11 +40,15 @@ import java.util.Map;
 @EnableWrapResponse
 public class GatewayController {
 
-    private final SendService sendService;
+    private final KafkaTemplate<String, String> kafkaTemplate;
+    private final CountDownLatch latch = new CountDownLatch(1);
+    private final ConsumerFactory consumerFactory;
 
     @Autowired
-    public GatewayController(SendService sendService) {
-        this.sendService = sendService;
+    public GatewayController(KafkaTemplate<String, String> kafkaTemplate,
+                             ConsumerFactory consumerFactory) {
+        this.kafkaTemplate = kafkaTemplate;
+        this.consumerFactory = consumerFactory;
     }
 
     //GET
@@ -46,10 +65,6 @@ public class GatewayController {
                                              @RequestBody(required = false) Map<String, Object> requestBody,
                                              @RequestHeader Map<String, String> headers,
                                              HttpServletRequest req) {
-        if(true) {
-            System.out.println("dadsa");
-            throw new SystemException("hihi");
-        }
         return processRequest("POST", reqParam, requestBody, headers, req);
     }
 
@@ -132,7 +147,27 @@ public class GatewayController {
 
                 try {
                     if(StringUtil.isObject(topicMapper)) {
-                        sendService.pushToTopic(topicMapper.getTo(), request);
+                        //
+                        kafkaTemplate.send(topicMapper.getTo(), new ObjectMapper().writeValueAsString(request));
+                        // Đợi response từ topic 'from'
+                        Consumer<String, String> consumer = consumerFactory.createConsumer();
+                        consumer.subscribe(Collections.singletonList(topicMapper.getFrom()));
+
+                        new Thread(() -> {
+                            try {
+                                while (true) {
+                                    ConsumerRecords<String, String> records = consumer.poll(Duration.ofMillis(100));
+                                    records.forEach(record -> {
+                                        log.info("Receive response {}", record);
+                                        latch.countDown();
+                                    });
+                                }
+                            } finally {
+                                consumer.close();
+                            }
+                        }).start();
+
+                        return ResponseEntity.ok("Receive response from topic "+ topicMapper.getFrom() +" timeout!!!");
                     }
                 } catch (Exception e) {
                     throw new SystemException(500, e.getMessage());
