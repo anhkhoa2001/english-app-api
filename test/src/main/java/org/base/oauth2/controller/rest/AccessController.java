@@ -80,7 +80,5 @@ public class AccessController {
         return ResponseEntity.status(HttpStatus.FOUND)
                 .location(URI.create(googleUrl))
                 .build();
-
-
     }
 }

@@ -1,15 +1,15 @@
+#config kafka
 kafka:
   properties:
     bootstrap:
       servers: localhost:9092
   gateway:
-    group_id: englist-socket
-
-
+    group_id: english-socket
 
 server:
   port: 9001
 
+#config database && cache
 spring:
   datasource:
     password: 1
@@ -17,9 +17,32 @@ spring:
     username: khoadt
   jpa:
     hibernate:
-      ddl-auto: validate
+      ddl-auto: create
       naming:
         implicit-strategy: org.hibernate.boot.model.naming.ImplicitNamingStrategyLegacyJpaImpl
         physical-strategy: org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl
     database-platform: org.hibernate.dialect.PostgreSQLDialect
     show-sql: true
+  redis:
+    host: localhost
+    port: 6379
+  security:
+    oauth2:
+      client:
+        registration:
+          github:
+            client-id: d180a2c1fdb7f14108e1
+            client-secret: 6144aea24b43dcda66725c3a02b2f4665977d26f
+          google:
+            client-id: 888434469215-q6d7ck80da35b9g45qrkc9s5bvpm0s5c.apps.googleusercontent.com
+            client-secret: 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
+
+#url fe
+url:
+  fe: http://localhost:5173/
+
+#thoi gian cua token la 3h
+secret:
+  key: MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQDjrOOSzmnZkvqyTMj79MWRr15Q4fSdottj53i3WgUONNsglt5zdH0XMCYo9YqcrWorzleuuVn1XFoX+ujZolY9dRPz93JeCLJSnHzOAS+/UFO1iCu4kTAdQW32ME2vbmqhf4MYlVcDRdd8V/dOODHzd0bHjqMGR5Hglbf9v8oZQIDAQAB
+  time_live: 180000
+
