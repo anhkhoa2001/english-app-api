@@ -1,9 +1,12 @@
-package org.base.oauth2.controller.rest;
+package org.base.oauth2.controllers.rest;
 
 import lombok.extern.slf4j.Slf4j;
+import org.base.exception.ValidationException;
 import org.base.oauth2.config.JwtTokenSetup;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -20,6 +23,11 @@ public class AccessController {
     @Autowired
     public AccessController(JwtTokenSetup jwtTokenSetup) {
         this.jwtTokenSetup = jwtTokenSetup;
+    }
+
+    @GetMapping
+    public ResponseEntity<Object> testGet() {
+        throw new ValidationException("123");
     }
 
     /*@GetMapping("/get-token")

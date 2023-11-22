@@ -1,4 +1,4 @@
-package org.base.oauth2.controller.pub;
+package org.base.oauth2.controllers.pub;
 
 import lombok.extern.slf4j.Slf4j;
 import org.base.config.EnableWrapResponse;
