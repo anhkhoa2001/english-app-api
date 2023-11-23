@@ -11,5 +11,10 @@ kafka:
 spring:
   profiles:
     active: local
+  kafka:
+    consumer:
+      enable-auto-commit: false
+    listener:
+      ack-mode: manual
 
 

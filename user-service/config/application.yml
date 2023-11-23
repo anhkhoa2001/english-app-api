@@ -11,6 +11,11 @@ server:
 
 #config database && cache
 spring:
+  kafka:
+    consumer:
+      enable-auto-commit: false
+    listener:
+      ack-mode: manual
   datasource:
     password: 1
     url: jdbc:postgresql://localhost:5432/user_service?currentSchema=user

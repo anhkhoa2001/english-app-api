@@ -36,6 +36,12 @@ public class UserServiceImpl implements UserService {
         if(tokenCache != null && tokenCache.getToken() != null) {
             tokenCacheRepo.delete(tokenCache);
         }
+        if(tokenCache == null) {
+            tokenCache = new TokenCache();
+            tokenCache.setCode(code);
+            tokenCache.setType(type);
+            tokenCache.setUsername(username);
+        }
         String token = jwtTokenSetup.generateToken(username, code, type);
         Long currentTime = new Date().getTime();
         tokenCache.setToken(token);

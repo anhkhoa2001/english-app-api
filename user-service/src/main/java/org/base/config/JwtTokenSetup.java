@@ -31,6 +31,7 @@ public class JwtTokenSetup {
                 .setIssuedAt(now)
                 .setExpiration(expiryDate)
                 .setId(code)
+                .setClaims(null)
                 .setPayload(type)
                 .signWith(SignatureAlgorithm.HS512, SECRET_KEY)
                 .compact();

@@ -15,4 +15,6 @@ public class TokenCache {
     private Long expiredIn;
     private Long createTime;
     private String type;
+
+
 }

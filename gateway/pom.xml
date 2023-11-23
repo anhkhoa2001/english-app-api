@@ -25,6 +25,13 @@
         </dependency>
 
         <dependency>
+            <groupId>org.apache.kafka</groupId>
+            <artifactId>kafka-clients</artifactId>
+            <version>3.6.0</version>
+        </dependency>
+
+
+        <dependency>
             <artifactId>core</artifactId>
             <version>1.0</version>
             <groupId>org.base</groupId>

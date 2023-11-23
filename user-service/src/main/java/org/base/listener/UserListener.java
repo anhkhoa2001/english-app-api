@@ -31,21 +31,22 @@ public class UserListener {
 
 
     @KafkaListener(topics = Constants.SERVICE.USER.TO, groupId = "english-socket")
-    public void onListener(Object payload, @Header(KafkaHeaders.RECEIVED_TIMESTAMP) Long ts, Acknowledgment ack) {
+    public void onListener(String payload, @Header(KafkaHeaders.RECEIVED_TIMESTAMP) Long ts, Acknowledgment ack) {
         log.info("Content payload {}", payload);
 
         try {
-            MessageRequestDTO request = new ObjectMapper().convertValue(payload, MessageRequestDTO.class);
+            MessageRequestDTO request = new ObjectMapper().readValue(payload, MessageRequestDTO.class);
             Object response = null;
             switch (request.getRequestMethod()) {
                 case "POST":
-                    if(request.getRequestPath().equalsIgnoreCase("/user-info/generate-token")) {
+                    if(request.getRequestPath().equalsIgnoreCase("/user/user-info/generate-token")) {
                         response = userController.generateToken(request.getBodyParam());
                         sendService.pushToTopic(Constants.SERVICE.USER.FROM, response);
                     }
                     break;
             }
         } catch (IllegalArgumentException ie) {
+            ie.printStackTrace();
             log.info("Parse json format MessageRequestDTO failed!! ---> {}", payload);
             throw new SystemException("Parse json format MessageRequestDTO failed");
         } catch (JsonProcessingException je) {
