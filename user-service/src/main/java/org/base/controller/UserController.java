@@ -18,4 +18,12 @@ public class UserController {
         return ResponseEntity.ok(userService.generateToken(bodyParam));
     }
 
+    public boolean checkToken(Map<String, String> headerParam) {
+        return false;
+    }
+
+    public Object getAllUser() {
+        return userService.getAllUser();
+    }
+
 }

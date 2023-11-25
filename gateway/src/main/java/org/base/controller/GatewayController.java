@@ -1,5 +1,7 @@
 package org.base.controller;
 
+import com.fasterxml.jackson.core.JacksonException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.gson.Gson;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.kafka.clients.consumer.Consumer;
@@ -25,6 +27,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import java.time.Duration;
+import java.time.Instant;
 import java.util.Collections;
 import java.util.Map;
 import java.util.concurrent.CountDownLatch;
@@ -140,30 +143,41 @@ public class GatewayController {
             ApiDTO api = GatewayConfig.MAPPING_SERVICE_PATH.getOrDefault(requestPath + Constants.TEMPLE_SPLIT + requestMethod, null);
             if(StringUtil.isObject(api)) {
                 MessageRequestDTO request = new MessageRequestDTO(requestMethod, requestPath,
-                        urlParams, pathParam, body, header);
+                        urlParams, pathParam, body, header, api.isAuth());
                 TopicMapper topicMapper = GatewayConfig.MAPPING_SERVICE_TOPIC.get(api.getTopic());
 
                 if(StringUtil.isObject(topicMapper)) {
-                    //
                     kafkaTemplate.send(topicMapper.getTo(), new Gson().toJson(request));
+
+                    // Thiết lập thời gian timeout (ví dụ: 30 giây)
+                    long timeoutInMillis = 5000; // 5 seconds
+                    Instant startTime = Instant.now();
 
                     // Đợi response từ topic 'from'
                     Consumer<String, String> consumer = consumerFactory.createConsumer();
                     consumer.subscribe(Collections.singletonList(topicMapper.getFrom()));
-                    ConsumerRecord consumerRecord = null;
-                    new Thread(() -> {
-                        try {
-                            while (true) {
-                                ConsumerRecords<String, String> records = consumer.poll(Duration.ofMillis(100));
+                    try {
+                        while (true) {
+                            ConsumerRecords<String, String> records = consumer.poll(Duration.ofMillis(100));
 
-                                if (!records.isEmpty()) {
-                                    consumerRecord = records.iterator().next();
-                                }
+                            if (!records.isEmpty()) {
+                                ConsumerRecord<String, String> consumerRecord = records.iterator().next();
+                                consumer.commitSync();
+                                Object object = new ObjectMapper().readValue(consumerRecord.value(), Object.class);
+                                return ResponseEntity.ok(object);
                             }
-                        } finally {
-                            consumer.close();
+
+                            // Kiểm tra nếu đã vượt quá thời gian timeout
+                            Instant currentTime = Instant.now();
+                            if (Duration.between(startTime, currentTime).toMillis() > timeoutInMillis) {
+                                throw new SystemException("Timeout while waiting for messages");
+                            }
                         }
-                    }).start();
+                    } catch (JacksonException je) {
+                        throw new SystemException("Parse json response failed!!");
+                    } finally{
+                        consumer.close();
+                    }
                 }
             }
             //return

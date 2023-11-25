@@ -19,9 +19,5 @@ public class MessageRequestDTO extends AItemDTO {
     private String pathParam;
     private Map<String, Object> bodyParam;
     private Map<String, String> headerParam;
-
-
-    public String toJsonString(){
-        return new Gson().toJson(this);
-    }
+    private boolean auth;
 }

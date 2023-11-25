@@ -1,8 +1,10 @@
 package org.base.services.impl;
 
+import io.jsonwebtoken.Claims;
 import org.base.config.JwtTokenSetup;
 import org.base.exception.ValidationException;
 import org.base.model.cache.TokenCache;
+import org.base.repositories.UserRepository;
 import org.base.repositories.cache.TokenCacheRepository;
 import org.base.services.UserService;
 import org.base.utils.StringUtil;
@@ -20,6 +22,9 @@ public class UserServiceImpl implements UserService {
 
     @Autowired
     private TokenCacheRepository tokenCacheRepo;
+
+    @Autowired
+    private UserRepository userRepo;
 
     @Override
     public String generateToken(Map<String, Object> bodyParam) {
@@ -50,5 +55,21 @@ public class UserServiceImpl implements UserService {
 
         tokenCacheRepo.save(tokenCache);
         return token;
+    }
+
+    @Override
+    public boolean checkToken(Map<String, String> headerParam) {
+        String token = headerParam.getOrDefault("Authorization", "Bearer ");
+        token = token.replaceAll("Bearer ", "");
+        Claims claims = jwtTokenSetup.getClaimsFromToken(token);
+
+        String username = claims.getSubject();
+        String type = claims.get("payload").toString();
+        return tokenCacheRepo.findTokenCacheByUsernameAndType(username, type) != null;
+    }
+
+    @Override
+    public Object getAllUser() {
+        return userRepo.findAll();
     }
 }

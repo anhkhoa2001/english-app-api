@@ -1,14 +1,14 @@
 [
   {
-    "path": "/user/get-all",
+    "path": "/user/user-info/get-all",
     "topic": "user",
     "auth": true,
-    "method": "post"
+    "method": "get"
   },
   {
     "path": "/user/user-info/generate-token",
     "topic": "user",
-    "auth": true,
+    "auth": false,
     "method": "post"
   }
 ]

@@ -29,4 +29,7 @@ public class UserModel {
 
     @Column(name = "AVATAR")
     private String avatar;
+
+    @Column(name = "TYPE")
+    private String type;
 }

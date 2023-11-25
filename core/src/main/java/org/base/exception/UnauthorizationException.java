@@ -8,7 +8,6 @@ public class UnauthorizationException extends AppException {
     public UnauthorizationException(String message) {
         super(message);
     }
-
     public UnauthorizationException() {
         super("You don't have permission access to resource!!");
     }
