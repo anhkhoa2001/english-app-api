@@ -22,17 +22,14 @@ public class JwtTokenSetup {
     public JwtTokenSetup() {
     }
 
-    public String generateToken(String username, String code, String type) {
+    public String generateToken(String code) {
         Date now = new Date();
         Date expiryDate = new Date(now.getTime() + TIMER);
 
         return Jwts.builder()
-                .setSubject(username)
+                .setSubject(code)
                 .setIssuedAt(now)
                 .setExpiration(expiryDate)
-                .setId(code)
-                .setClaims(null)
-                .setPayload(type)
                 .signWith(SignatureAlgorithm.HS512, SECRET_KEY)
                 .compact();
     }

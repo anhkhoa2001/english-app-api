@@ -6,8 +6,5 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface TokenCacheRepository extends CrudRepository<TokenCache, String> {
-
-    TokenCache findTokenCacheByUsernameAndType(String username, String type);
-
-
+    TokenCache findByUsernameAndType(String username, String type);
 }

@@ -12,8 +12,10 @@ import org.base.config.GatewayConfig;
 import org.base.dto.ApiDTO;
 import org.base.dto.TopicMapper;
 import org.base.dto.common.MessageRequestDTO;
+import org.base.dto.common.ModuleErrorResponseDTO;
 import org.base.exception.SystemException;
 import org.base.exception.UnauthorizationException;
+import org.base.exception.ValidationException;
 import org.base.listener.UserServiceListener;
 import org.base.utils.Constants;
 import org.base.utils.StringUtil;
@@ -29,6 +31,7 @@ import javax.servlet.http.HttpServletRequest;
 import java.time.Duration;
 import java.time.Instant;
 import java.util.Collections;
+import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.concurrent.CountDownLatch;
 
@@ -162,8 +165,9 @@ public class GatewayController {
 
                             if (!records.isEmpty()) {
                                 ConsumerRecord<String, String> consumerRecord = records.iterator().next();
-                                consumer.commitSync();
                                 Object object = new ObjectMapper().readValue(consumerRecord.value(), Object.class);
+
+                                consumer.commitSync();
                                 return ResponseEntity.ok(object);
                             }
 

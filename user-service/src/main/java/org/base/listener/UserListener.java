@@ -3,14 +3,17 @@ package org.base.listener;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.http.HttpStatus;
 import org.base.config.JwtTokenSetup;
 import org.base.controller.UserController;
 import org.base.dto.common.MessageRequestDTO;
-import org.base.exception.SystemException;
-import org.base.exception.UnauthorizationException;
+import org.base.dto.common.MessageResponseDTO;
+import org.base.dto.common.ModuleErrorResponseDTO;
+import org.base.exception.*;
 import org.base.services.SendService;
 import org.base.utils.Constants;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.kafka.support.Acknowledgment;
 import org.springframework.kafka.support.KafkaHeaders;
@@ -64,13 +67,14 @@ public class UserListener {
                     }
                     break;
             }
-        } catch (IllegalArgumentException ie) {
-            ie.printStackTrace();
-            log.info("Parse json format MessageRequestDTO failed!! ---> {}", payload);
-            throw new SystemException("Parse json format MessageRequestDTO failed");
-        } catch (JsonProcessingException je) {
-            log.info("Build json response failed!!");
-            throw new SystemException("Build json response failed!!");
+        } catch (UnauthorizationException ue) {
+            sendService.pushToTopic(Constants.SERVICE.USER.FROM, new ModuleErrorResponseDTO(ue.getMessage(), 401));
+        } catch (ValidationException ve) {
+            sendService.pushToTopic(Constants.SERVICE.USER.FROM, new ModuleErrorResponseDTO(ve.getMessage(), 404));
+        } catch (SystemException se) {
+            sendService.pushToTopic(Constants.SERVICE.USER.FROM, new ModuleErrorResponseDTO(se.getMessage(), 500));
+        }  catch (JsonProcessingException je) {
+            sendService.pushToTopic(Constants.SERVICE.USER.FROM, new ModuleErrorResponseDTO("Parse json format MessageRequestDTO failed", 500));
         } finally {
             ack.acknowledge();
         }

@@ -33,18 +33,18 @@ public class AccessServiceImpl implements AccessService {
             throw new UnauthorizationException();
         }
 
-        String type = oAuth2User.getAttribute("login") != null ? Constants.TYPE_LOGIN.GITHUB : Constants.TYPE_LOGIN.GOOGLE;
+        String type = oAuth2User.getAttribute("avatar_url") != null ? Constants.TYPE_LOGIN.GITHUB : Constants.TYPE_LOGIN.GOOGLE;
         String code = UUID.randomUUID().toString();
         String username = type.equals(Constants.TYPE_LOGIN.GITHUB)
                         ? oAuth2User.getAttribute("login") : oAuth2User.getAttribute("email");
 
         //save to cache
-        /*TokenCache tokenCache = new TokenCache();
+        TokenCache tokenCache = new TokenCache();
         tokenCache.setCode(code);
         tokenCache.setType(type);
         tokenCache.setUsername(username);
 
-        tokenCacheRepo.save(tokenCache);*/
+        tokenCacheRepo.save(tokenCache);
 
         //save user if user not exist
         UserModel userModel = userRepo.getByUsernameAndType(username, type);
@@ -66,6 +66,6 @@ public class AccessServiceImpl implements AccessService {
             userRepo.save(userModel);
         }
 
-        return urlFe + "?type=" + type + "&code=" + code + "&username=" + username;
+        return urlFe + "?code=" + code;
     }
 }

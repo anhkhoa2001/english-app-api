@@ -2,17 +2,22 @@ package org.base.services.impl;
 
 import io.jsonwebtoken.Claims;
 import org.base.config.JwtTokenSetup;
+import org.base.exception.UnauthorizationException;
 import org.base.exception.ValidationException;
+import org.base.model.UserModel;
 import org.base.model.cache.TokenCache;
 import org.base.repositories.UserRepository;
 import org.base.repositories.cache.TokenCacheRepository;
 import org.base.services.UserService;
 import org.base.utils.StringUtil;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.util.Date;
+import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 @Service
 public class UserServiceImpl implements UserService {
@@ -29,25 +34,24 @@ public class UserServiceImpl implements UserService {
     @Override
     public String generateToken(Map<String, Object> bodyParam) {
         String username = bodyParam.getOrDefault("username", "").toString();
-        String type = bodyParam.getOrDefault("type", "").toString();
+        String type = bodyParam.getOrDefault("type", "").toString().toUpperCase();
         String code = bodyParam.getOrDefault("code", "").toString();
 
         if(StringUtil.isNullOrEmpty(username) || StringUtil.isNullOrEmpty(type) || StringUtil.isNullOrEmpty(code)) {
             throw new ValidationException("Add info account to body!!");
         }
 
-        TokenCache tokenCache = tokenCacheRepo.findTokenCacheByUsernameAndType(username, type);
-
-        if(tokenCache != null && tokenCache.getToken() != null) {
-            tokenCacheRepo.delete(tokenCache);
+        UserModel user = userRepo.getByUsernameAndType(username, type);
+        if (user == null) {
+            throw new UnauthorizationException();
         }
-        if(tokenCache == null) {
-            tokenCache = new TokenCache();
-            tokenCache.setCode(code);
-            tokenCache.setType(type);
-            tokenCache.setUsername(username);
+        List<TokenCache> tokenCaches = (List<TokenCache>) tokenCacheRepo.findAll();
+        Optional<TokenCache> op = tokenCacheRepo.findById(code);
+        if(op.isEmpty()) {
+            throw new UnauthorizationException();
         }
-        String token = jwtTokenSetup.generateToken(username, code, type);
+        TokenCache tokenCache = op.get();
+        String token = jwtTokenSetup.generateToken(code);
         Long currentTime = new Date().getTime();
         tokenCache.setToken(token);
         tokenCache.setCreateTime(currentTime);
@@ -59,13 +63,15 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public boolean checkToken(Map<String, String> headerParam) {
-        String token = headerParam.getOrDefault("Authorization", "Bearer ");
-        token = token.replaceAll("Bearer ", "");
-        Claims claims = jwtTokenSetup.getClaimsFromToken(token);
+        String token = headerParam.getOrDefault("authorization", "Bearer ");
+        try {
+            token = token.replaceAll("Bearer ", "");
+            Claims claims = jwtTokenSetup.getClaimsFromToken(token);
 
-        String username = claims.getSubject();
-        String type = claims.get("payload").toString();
-        return tokenCacheRepo.findTokenCacheByUsernameAndType(username, type) != null;
+            return tokenCacheRepo.findById(claims.getSubject()).isPresent();
+        } catch (Exception e) {
+            throw new UnauthorizationException();
+        }
     }
 
     @Override

@@ -15,11 +15,11 @@ public class UserController {
     private UserService userService;
 
     public Object generateToken(Map<String, Object> bodyParam){
-        return ResponseEntity.ok(userService.generateToken(bodyParam));
+        return userService.generateToken(bodyParam);
     }
 
     public boolean checkToken(Map<String, String> headerParam) {
-        return false;
+        return userService.checkToken(headerParam);
     }
 
     public Object getAllUser() {

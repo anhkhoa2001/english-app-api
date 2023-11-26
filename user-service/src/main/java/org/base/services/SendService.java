@@ -4,6 +4,6 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 
 public interface SendService {
 
-    void pushToTopic(String topic, Object request) throws JsonProcessingException;
+    void pushToTopic(String topic, Object request);
 
 }
