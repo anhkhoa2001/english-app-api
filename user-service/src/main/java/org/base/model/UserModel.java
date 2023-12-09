@@ -1,6 +1,8 @@
 package org.base.model;
 
 import lombok.Data;
+import org.hibernate.annotations.Fetch;
+import org.hibernate.annotations.FetchMode;
 
 import javax.persistence.*;
 import java.util.Date;
@@ -25,7 +27,7 @@ public class UserModel {
     private String email;
 
     @Column(name = "FULLNAME")
-    private String fullname;
+    private Course fullname;
 
     @Column(name = "AVATAR")
     private String avatar;

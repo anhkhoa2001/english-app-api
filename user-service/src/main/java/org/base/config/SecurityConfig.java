@@ -24,8 +24,6 @@ public class SecurityConfig {
                 })
                 .oauth2Login()
                 .loginPage("/login").defaultSuccessUrl("/access/redirect-to-react-app");
-
-        //http.addFilterAfter(jwtFilter, UsernamePasswordAuthenticationFilter.class);
         return http.build();
     }
 

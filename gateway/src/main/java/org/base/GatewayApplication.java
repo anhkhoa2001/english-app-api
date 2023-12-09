@@ -17,4 +17,4 @@ public class GatewayApplication {
 
 
 //gateway : 9000
-//user: 9001
+//user:

@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Date;
 import java.util.UUID;
@@ -28,6 +29,7 @@ public class AccessServiceImpl implements AccessService {
     private UserRepository userRepo;
 
     @Override
+    @Transactional
     public String getUrl(OAuth2User oAuth2User) {
         if(oAuth2User == null) {
             throw new UnauthorizationException();
