@@ -1,5 +1,6 @@
 package org.base.services.impl;
 
+import org.base.exception.SystemException;
 import org.base.exception.UnauthorizationException;
 import org.base.model.UserModel;
 import org.base.model.cache.TokenCache;
@@ -31,43 +32,48 @@ public class AccessServiceImpl implements AccessService {
     @Override
     @Transactional
     public String getUrl(OAuth2User oAuth2User) {
-        if(oAuth2User == null) {
-            throw new UnauthorizationException();
-        }
-
-        String type = oAuth2User.getAttribute("avatar_url") != null ? Constants.TYPE_LOGIN.GITHUB : Constants.TYPE_LOGIN.GOOGLE;
-        String code = UUID.randomUUID().toString();
-        String username = type.equals(Constants.TYPE_LOGIN.GITHUB)
-                        ? oAuth2User.getAttribute("login") : oAuth2User.getAttribute("email");
-
-        //save to cache
-        TokenCache tokenCache = new TokenCache();
-        tokenCache.setCode(code);
-        tokenCache.setType(type);
-        tokenCache.setUsername(username);
-
-        tokenCacheRepo.save(tokenCache);
-
-        //save user if user not exist
-        UserModel userModel = userRepo.getByUsernameAndType(username, type);
-        if(userModel == null) {
-            userModel = new UserModel();
-            userModel.setUsername(username);
-            userModel.setUserId(code);
-            userModel.setType(type);
-            userModel.setCreateAt(new Date());
-            userModel.setFullname(oAuth2User.getAttribute("name"));
-
-            if(type.equals(Constants.TYPE_LOGIN.GOOGLE)) {
-                userModel.setEmail(username);
-                userModel.setAvatar(oAuth2User.getAttribute("picture"));
-            } else {
-                userModel.setAvatar(oAuth2User.getAttribute("avatar_url"));
+        try {
+            if(oAuth2User == null) {
+                throw new UnauthorizationException();
             }
 
-            userRepo.save(userModel);
-        }
+            String type = oAuth2User.getAttribute("avatar_url") != null ? Constants.TYPE_LOGIN.GITHUB : Constants.TYPE_LOGIN.GOOGLE;
+            String code = UUID.randomUUID().toString();
+            String username = type.equals(Constants.TYPE_LOGIN.GITHUB)
+                    ? oAuth2User.getAttribute("login") : oAuth2User.getAttribute("email");
 
-        return urlFe + "?code=" + code;
+            //save to cache
+            TokenCache tokenCache = new TokenCache();
+            tokenCache.setCode(code);
+            tokenCache.setType(type);
+            tokenCache.setUsername(username);
+
+            tokenCacheRepo.save(tokenCache);
+
+            //save user if user not exist
+            UserModel userModel = userRepo.getByUsernameAndType(username, type);
+            if(userModel == null) {
+                userModel = new UserModel();
+                userModel.setUsername(username);
+                userModel.setUserId(code);
+                userModel.setType(type);
+                userModel.setCreateAt(new Date());
+                userModel.setRoleCode(Constants.ROLE_CODE.STUDENT);
+                userModel.setFullname(oAuth2User.getAttribute("name"));
+
+                if(type.equals(Constants.TYPE_LOGIN.GOOGLE)) {
+                    userModel.setEmail(username);
+                    userModel.setAvatar(oAuth2User.getAttribute("picture"));
+                } else {
+                    userModel.setAvatar(oAuth2User.getAttribute("avatar_url"));
+                }
+
+                userRepo.save(userModel);
+            }
+
+            return urlFe + "?code=" + code;
+        } catch (Exception e) {
+            throw new SystemException("Server failed");
+        }
     }
 }

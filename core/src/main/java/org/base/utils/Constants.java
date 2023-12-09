@@ -2,6 +2,14 @@ package org.base.utils;
 
 public class Constants {
 
+    public interface ROLE_CODE {
+        String STUDENT = "STUDENT";
+
+        String PROFESSOR = "PROFESSOR";
+
+        String ADMIN = "ADMIN";
+    }
+
     public interface FORMAT_TIME {
         String DATE_TIME = "HH:mm:ss dd/MM/yyyy";
 

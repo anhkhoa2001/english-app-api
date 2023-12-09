@@ -1,15 +1,13 @@
 package org.base.model;
 
 import lombok.Data;
-import org.hibernate.annotations.Fetch;
-import org.hibernate.annotations.FetchMode;
 
 import javax.persistence.*;
 import java.util.Date;
 
 @Data
 @Entity
-@Table(name = "E_USER")
+@Table(name = "U_USER")
 public class UserModel {
 
     @Id
@@ -27,11 +25,14 @@ public class UserModel {
     private String email;
 
     @Column(name = "FULLNAME")
-    private Course fullname;
+    private String fullname;
 
     @Column(name = "AVATAR")
     private String avatar;
 
     @Column(name = "TYPE")
     private String type;
+
+    @Column(name = "ROLE_CODE")
+    private String roleCode;
 }

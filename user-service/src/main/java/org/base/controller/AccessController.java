@@ -1,7 +1,11 @@
 package org.base.controller;
 
+import io.jsonwebtoken.Claims;
 import lombok.extern.slf4j.Slf4j;
 import org.base.config.EnableWrapResponse;
+import org.base.config.JwtTokenSetup;
+import org.base.exception.UnauthorizationException;
+import org.base.repositories.cache.TokenCacheRepository;
 import org.base.services.AccessService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -22,13 +26,21 @@ public class AccessController {
     @Autowired
     private AccessService accessService;
 
+    @Autowired
+    private JwtTokenSetup jwtTokenSetup;
 
-    @GetMapping("/check-login")
-    public ResponseEntity checkLogin(@AuthenticationPrincipal OAuth2User oAuth2User) {
-        if (oAuth2User != null) {
-            return ResponseEntity.ok(oAuth2User);
-        } else {
-            return new ResponseEntity(HttpStatus.UNAUTHORIZED);
+    @Autowired
+    private TokenCacheRepository tokenCacheRepo;
+
+    @GetMapping("/check-token")
+    public ResponseEntity checkLogin(@RequestHeader("Authorization") String token) {
+        try {
+            token = token.replaceAll("Bearer ", "");
+            Claims claims = jwtTokenSetup.getClaimsFromToken(token);
+
+            return ResponseEntity.ok(tokenCacheRepo.findById(claims.getSubject()).isPresent());
+        } catch (Exception e) {
+            throw new UnauthorizationException();
         }
     }
 
