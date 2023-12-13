@@ -71,7 +71,7 @@ public class AccessServiceImpl implements AccessService {
                 userRepo.save(userModel);
             }
 
-            return urlFe + "?code=" + code;
+            return urlFe + "?code=" + code + "&username=" + username + "&type=" + type;
         } catch (Exception e) {
             throw new SystemException("Server failed");
         }

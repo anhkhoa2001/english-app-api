@@ -13,6 +13,7 @@ import org.base.utils.StringUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Date;
 import java.util.List;
@@ -32,6 +33,7 @@ public class UserServiceImpl implements UserService {
     private UserRepository userRepo;
 
     @Override
+    @Transactional
     public String generateToken(Map<String, Object> bodyParam) {
         String username = bodyParam.getOrDefault("username", "").toString();
         String type = bodyParam.getOrDefault("type", "").toString().toUpperCase();

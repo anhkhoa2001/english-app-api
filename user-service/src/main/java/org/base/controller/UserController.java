@@ -1,9 +1,7 @@
 package org.base.controller;
 
-import org.base.exception.ValidationException;
 import org.base.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.Map;
