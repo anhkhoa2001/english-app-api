@@ -5,6 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.base.config.EnableWrapResponse;
 import org.base.config.JwtTokenSetup;
 import org.base.exception.UnauthorizationException;
+import org.base.model.cache.TokenCache;
 import org.base.repositories.cache.TokenCacheRepository;
 import org.base.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,6 +13,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Map;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/public")
@@ -38,6 +40,22 @@ public class PublicController {
         } catch (Exception e) {
             throw new UnauthorizationException();
         }
+    }
+
+    @GetMapping("/kill-token")
+    public ResponseEntity killToken(@RequestHeader("Authorization") String token) {
+        token = token.replaceAll("Bearer ", "");
+        Claims claims = jwtTokenSetup.getClaimsFromToken(token);
+
+        System.out.println(claims.getSubject());
+
+        Optional<TokenCache> tokenCache = tokenCacheRepo.findById(claims.getSubject());
+        if(tokenCache.isEmpty()) {
+            throw new UnauthorizationException();
+        }
+        tokenCacheRepo.delete(tokenCache.get());
+
+        return ResponseEntity.ok("DONE!");
     }
 
     @PostMapping("/generate-token")
