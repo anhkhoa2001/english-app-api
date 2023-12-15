@@ -47,7 +47,6 @@ public class UserServiceImpl implements UserService {
         if (user == null) {
             throw new UnauthorizationException();
         }
-        List<TokenCache> tokenCaches = (List<TokenCache>) tokenCacheRepo.findAll();
         Optional<TokenCache> op = tokenCacheRepo.findById(code);
         if(op.isEmpty()) {
             throw new UnauthorizationException();
@@ -65,7 +64,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public boolean checkToken(Map<String, String> headerParam) {
-        String token = headerParam.getOrDefault("authorization", "Bearer ");
+        String token = headerParam.getOrDefault("Authorization", "Bearer ");
         try {
             token = token.replaceAll("Bearer ", "");
             Claims claims = jwtTokenSetup.getClaimsFromToken(token);
@@ -79,5 +78,18 @@ public class UserServiceImpl implements UserService {
     @Override
     public Object getAllUser() {
         return userRepo.findAll();
+    }
+
+    @Override
+    public Object getUserInfo(Map<String, String> headerParam) {
+        String token = headerParam.getOrDefault("Authorization", "Bearer ");
+        try {
+            token = token.replaceAll("Bearer ", "");
+            Claims claims = jwtTokenSetup.getClaimsFromToken(token);
+
+            return userRepo.findById(claims.getSubject()).isPresent();
+        } catch (Exception e) {
+            throw new UnauthorizationException();
+        }
     }
 }

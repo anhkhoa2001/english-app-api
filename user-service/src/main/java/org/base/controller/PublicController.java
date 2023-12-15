@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 
@@ -47,8 +48,6 @@ public class PublicController {
         token = token.replaceAll("Bearer ", "");
         Claims claims = jwtTokenSetup.getClaimsFromToken(token);
 
-        System.out.println(claims.getSubject());
-
         Optional<TokenCache> tokenCache = tokenCacheRepo.findById(claims.getSubject());
         if(tokenCache.isEmpty()) {
             throw new UnauthorizationException();
@@ -61,6 +60,13 @@ public class PublicController {
     @PostMapping("/generate-token")
     public ResponseEntity generateToken(@RequestBody Map<String, Object> bodyParam){
         return ResponseEntity.ok(userService.generateToken(bodyParam));
+    }
+
+    @GetMapping("/user-info")
+    public ResponseEntity userInfo(@RequestHeader("Authorization") String token){
+        Map<String, String> header = new HashMap<>();
+        header.put("Authorization", token);
+        return ResponseEntity.ok(userService.getUserInfo(header));
     }
 
 }

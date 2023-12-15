@@ -41,6 +41,12 @@ spring:
           google:
             client-id: 888434469215-q6d7ck80da35b9g45qrkc9s5bvpm0s5c.apps.googleusercontent.com
             client-secret: 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
+          facebook:
+            client-id: 3345241832432650
+            client-secret: 0a85969d6133842901cbc6306efa14bf
+            scope:
+              - email
+              - public_profile
 
 #url fe
 url:

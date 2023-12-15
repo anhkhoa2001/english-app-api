@@ -24,7 +24,7 @@ public class SecurityConfig {
                     auth.anyRequest().authenticated();
                 })
                 .oauth2Login()
-                .loginPage("/login").defaultSuccessUrl("/access/redirect-to-react-app");
+                .defaultSuccessUrl("/access/redirect-to-react-app");
         return http.build();
     }
 }

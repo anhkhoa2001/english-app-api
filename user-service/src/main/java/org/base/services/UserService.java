@@ -9,4 +9,6 @@ public interface UserService {
     boolean checkToken(Map<String, String> headerParam);
 
     Object getAllUser();
+
+    Object getUserInfo(Map<String, String> headerParam);
 }
