@@ -37,7 +37,9 @@ public class AccessServiceImpl implements AccessService {
                 throw new UnauthorizationException();
             }
 
-            String type = oAuth2User.getAttribute("avatar_url") != null ? Constants.TYPE_LOGIN.GITHUB : Constants.TYPE_LOGIN.GOOGLE;
+            String type = oAuth2User.getAttribute("avatar_url") != null ?
+                    Constants.TYPE_LOGIN.GITHUB :
+                    (oAuth2User.getAttribute("name_format") != null ? Constants.TYPE_LOGIN.FACEBOOK : Constants.TYPE_LOGIN.GOOGLE);
             String code = UUID.randomUUID().toString();
             String username = type.equals(Constants.TYPE_LOGIN.GITHUB)
                     ? oAuth2User.getAttribute("login") : oAuth2User.getAttribute("email");
@@ -64,8 +66,10 @@ public class AccessServiceImpl implements AccessService {
                 if(type.equals(Constants.TYPE_LOGIN.GOOGLE)) {
                     userModel.setEmail(username);
                     userModel.setAvatar(oAuth2User.getAttribute("picture"));
-                } else {
+                } else if(type.equals(Constants.TYPE_LOGIN.GITHUB)) {
                     userModel.setAvatar(oAuth2User.getAttribute("avatar_url"));
+                } else {
+                    userModel.setEmail(username);
                 }
 
                 userRepo.save(userModel);

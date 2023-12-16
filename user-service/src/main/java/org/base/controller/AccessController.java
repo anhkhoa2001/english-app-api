@@ -46,6 +46,7 @@ public class AccessController {
 
     @GetMapping("/redirect-to-react-app")
     public ResponseEntity<Void> redirectToReactApp(@AuthenticationPrincipal OAuth2User oAuth2User) {
+        System.out.println("hello world");
         return ResponseEntity.status(HttpStatus.FOUND)
                 .location(URI.create(accessService.getUrl(oAuth2User)))
                 .build();

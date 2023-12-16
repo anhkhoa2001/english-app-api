@@ -11,6 +11,7 @@ import org.base.repositories.cache.TokenCacheRepository;
 import org.base.services.UserService;
 import org.base.utils.StringUtil;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -27,7 +28,7 @@ public class UserServiceImpl implements UserService {
     private JwtTokenSetup jwtTokenSetup;
 
     @Autowired
-    private TokenCacheRepository tokenCacheRepo;
+    private TokenCacheRepository  tokenCacheRepo;
 
     @Autowired
     private UserRepository userRepo;
@@ -83,13 +84,19 @@ public class UserServiceImpl implements UserService {
     @Override
     public Object getUserInfo(Map<String, String> headerParam) {
         String token = headerParam.getOrDefault("Authorization", "Bearer ");
-        try {
-            token = token.replaceAll("Bearer ", "");
-            Claims claims = jwtTokenSetup.getClaimsFromToken(token);
+        token = token.replaceAll("Bearer ", "");
+        String code = jwtTokenSetup.getCodeFromToken(token);
+        Optional<TokenCache> cache = tokenCacheRepo.findById(code);
 
-            return userRepo.findById(claims.getSubject()).isPresent();
-        } catch (Exception e) {
-            throw new UnauthorizationException();
+        if(cache.isEmpty()) {
+            throw new UnauthorizationException("Token expired!!!");
         }
+
+        UserModel user = userRepo.getByUsernameAndType(cache.get().getUsername(), cache.get().getType());
+        if(user == null) {
+            throw new UnauthorizationException("Token invalid!!!");
+        }
+
+        return user;
     }
 }

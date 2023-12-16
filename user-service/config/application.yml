@@ -43,11 +43,13 @@ spring:
             client-secret: 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
           facebook:
             client-id: 3345241832432650
-            client-secret: 0a85969d6133842901cbc6306efa14bf
+            client-secret: 74dae8859a9acee9f44c60dcd94f402b
             scope:
               - email
               - public_profile
-
+        provider:
+          facebook:
+            user-info-uri: https://graph.facebook.com/v18.0/me?fields=name_format,id,email,first_name,middle_name,last_name,name,verified,picture.width(250).height(250)
 #url fe
 url:
   fe: http://localhost:5173/
