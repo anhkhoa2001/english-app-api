@@ -19,6 +19,8 @@ public class Constants {
     public interface TYPE_LOGIN {
         String GOOGLE = "GOOGLE";
         String GITHUB = "GITHUB";
+
+        String FACEBOOK = "FACEBOOK";
     }
 
     public static final String TOKEN_TYPE = "Bearer ";

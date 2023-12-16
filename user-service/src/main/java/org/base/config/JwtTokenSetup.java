@@ -19,8 +19,7 @@ public class JwtTokenSetup {
     @Value("${secret.time_live}")
     private long TIMER;
 
-    public JwtTokenSetup() {
-    }
+    public JwtTokenSetup() {}
 
     public String generateToken(String code) {
         Date now = new Date();
@@ -39,6 +38,13 @@ public class JwtTokenSetup {
                 .setSigningKey(SECRET_KEY)
                 .parseClaimsJws(token)
                 .getBody();
+    }
+
+    public String getCodeFromToken(String token) {
+        return Jwts.parser()
+                .setSigningKey(SECRET_KEY)
+                .parseClaimsJws(token)
+                .getBody().getSubject();
     }
 
     public boolean validateToken(String authToken) {

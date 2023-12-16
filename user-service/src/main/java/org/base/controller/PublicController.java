@@ -33,14 +33,14 @@ public class PublicController {
 
     @GetMapping("/check-token")
     public ResponseEntity checkLogin(@RequestHeader("Authorization") String token) {
-        try {
-            token = token.replaceAll("Bearer ", "");
-            Claims claims = jwtTokenSetup.getClaimsFromToken(token);
+        token = token.replaceAll("Bearer ", "");
+        Claims claims = jwtTokenSetup.getClaimsFromToken(token);
 
-            return ResponseEntity.ok(tokenCacheRepo.findById(claims.getSubject()).isPresent());
-        } catch (Exception e) {
+        if(claims.getSubject().isEmpty()) {
             throw new UnauthorizationException();
         }
+
+        return ResponseEntity.ok(token);
     }
 
     @GetMapping("/kill-token")
@@ -53,7 +53,6 @@ public class PublicController {
             throw new UnauthorizationException();
         }
         tokenCacheRepo.delete(tokenCache.get());
-
         return ResponseEntity.ok("DONE!");
     }
 
