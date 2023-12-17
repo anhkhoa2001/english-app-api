@@ -1,7 +1,6 @@
 package org.base.service.impl;
 
 import com.azure.core.http.rest.PagedIterable;
-import com.azure.core.management.Resource;
 import com.azure.storage.blob.BlobContainerClient;
 import com.azure.storage.blob.models.BlobItem;
 import com.azure.storage.common.ParallelTransferOptions;
@@ -10,21 +9,16 @@ import com.azure.storage.file.share.ShareClient;
 import com.azure.storage.file.share.ShareDirectoryClient;
 import com.azure.storage.file.share.ShareFileClient;
 import com.azure.storage.file.share.models.ShareFileItem;
+import org.apache.tomcat.util.http.fileupload.ByteArrayOutputStream;
 import org.base.dto.common.EFile;
 import org.base.exception.SystemException;
 import org.base.service.AzureBlobService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.core.io.WritableResource;
 import org.springframework.stereotype.Service;
 
 import java.io.ByteArrayInputStream;
-import java.io.IOException;
 import java.io.InputStream;
-import java.io.OutputStream;
-import java.util.ArrayList;
-import java.util.Base64;
-import java.util.List;
+import java.util.*;
 
 @Service
 public class AzureBlobServiceImpl implements AzureBlobService {
@@ -46,18 +40,25 @@ public class AzureBlobServiceImpl implements AzureBlobService {
     }
 
     @Override
-    public List<String> listFileShares() {
+    public Map<String, Object> listFileShares() {
         ShareDirectoryClient directory = shareClient.getRootDirectoryClient();
         PagedIterable<ShareFileItem> items = directory.listFilesAndDirectories();
-        List<String> names = new ArrayList<String>();
+        Map<String, Object> map = new HashMap<>();
         for (ShareFileItem item : items) {
-            if (item.isDirectory()) {
-                names.add("Directory: " + item.getName());
-            } else {
-                names.add("File: " + item.getName());
-            }
+
         }
-        return names;
+        return map;
+    }
+
+
+    @Override
+    public ByteArrayOutputStream getDataFile(String filename) {
+        ShareFileClient share = shareClient.getDirectoryClient("js").getFileClient(filename);
+        ShareDirectoryClient shareRoot = shareClient.getRootDirectoryClient();
+        shareRoot.
+        ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+        share.download(byteArrayOutputStream);
+        return byteArrayOutputStream;
     }
 
     public String upload(EFile file){
