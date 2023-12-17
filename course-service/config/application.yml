@@ -1,0 +1,27 @@
+server:
+  port: 9002
+
+#config database
+spring:
+  datasource:
+    password: 1
+    url: jdbc:postgresql://localhost:5432/course_service?currentSchema=user
+    username: khoadt
+  jpa:
+    hibernate:
+      ddl-auto: update
+      naming:
+        implicit-strategy: org.hibernate.boot.model.naming.ImplicitNamingStrategyLegacyJpaImpl
+        physical-strategy: org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
+    show-sql: true
+
+#config azure
+azure:
+  storage:
+    container:
+      name: course
+    file-share:
+      name: english-app
+    connection:
+      string: DefaultEndpointsProtocol=https;AccountName=englishappone;AccountKey=7pbtKhYvhuHj1jdKUCtXDKz+xEduFyfHgKOxLUo517mXJYR/PWVsNRJlgBuHnAXZhEaaZt9l77+E+AStIp9NMQ==;EndpointSuffix=core.windows.net
