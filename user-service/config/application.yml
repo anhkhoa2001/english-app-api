@@ -6,7 +6,7 @@ server:
 spring:
   datasource:
     password: 1
-    url: jdbc:postgresql://localhost:5432/user_service?currentSchema=user
+    url: jdbc:postgresql://localhost:5432/user_service?currentSchema=user_schema
     username: khoadt
   jpa:
     hibernate:
@@ -20,13 +20,5 @@ spring:
     host: localhost
     port: 6379
 
-
-#url fe
-url:
-  fe: http://localhost:5173/
-
-#thoi gian cua token la 3h
-secret:
-  key: MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQDjrOOSzmnZkvqyTMj79MWRr15Q4fSdottj53i3WgUONNsglt5zdH0XMCYo9YqcrWorzleuuVn1XFoX+ujZolY9dRPz93JeCLJSnHzOAS+/UFO1iCu4kTAdQW32ME2vbmqhf4MYlVcDRdd8V/dOODHzd0bHjqMGR5Hglbf9v8oZQIDAQAB
-  time_live: 1800000
-
+kong:
+  api-key: JPrxbq2bbX6nJTJbu7INIameRUH6dRZn

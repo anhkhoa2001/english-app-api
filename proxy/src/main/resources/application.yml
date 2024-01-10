@@ -1,0 +1,45 @@
+server:
+  port: 9999
+
+kong:
+  gateway:
+    port: 8000
+    host: http://localhost
+    checkHost: NO
+  fe:
+    port: 5173
+    host: http://localhost
+    checkHost: NO
+  url:
+    create-user: http://localhost:8000/api/user/save-or-update
+  api-key: JPrxbq2bbX6nJTJbu7INIameRUH6dRZn
+
+#thoi gian cua token la 3h
+secret:
+  key: MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQDjrOOSzmnZkvqyTMj79MWRr15Q4fSdottj53i3WgUONNsglt5zdH0XMCYo9YqcrWorzleuuVn1XFoX+ujZolY9dRPz93JeCLJSnHzOAS+/UFO1iCu4kTAdQW32ME2vbmqhf4MYlVcDRdd8V/dOODHzd0bHjqMGR5Hglbf9v8oZQIDAQAB
+  time_live: 1800000
+
+spring:
+  redis:
+    host: localhost
+    port: 6379
+  security:
+    oauth2:
+      client:
+        registration:
+          github:
+            client-id: d180a2c1fdb7f14108e1
+            client-secret: 6144aea24b43dcda66725c3a02b2f4665977d26f
+          google:
+            client-id: 888434469215-q6d7ck80da35b9g45qrkc9s5bvpm0s5c.apps.googleusercontent.com
+            client-secret: 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
+          facebook:
+            client-id: 3345241832432650
+            client-secret: 74dae8859a9acee9f44c60dcd94f402b
+            scope:
+              - email
+              - public_profile
+        provider:
+          facebook:
+            user-info-uri: https://graph.facebook.com/v18.0/me?fields=name_format,id,email,first_name,middle_name,last_name,name,verified,picture.width(250).height(250)
+

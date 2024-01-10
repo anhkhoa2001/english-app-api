@@ -1,14 +1,13 @@
 package org.base.services;
 
+import org.base.dto.UserDTO;
+import org.base.model.UserModel;
+
 import java.util.Map;
 
 public interface UserService {
 
-    String generateToken(Map<String, Object> bodyParam);
-
-    boolean checkToken(Map<String, String> headerParam);
+    UserModel saveOrUpdate(UserDTO userDTO);
 
     Object getAllUser();
-
-    Object getUserInfo(Map<String, String> headerParam);
 }

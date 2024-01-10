@@ -1,7 +1,7 @@
 package org.base.services.impl;
 
 import io.jsonwebtoken.Claims;
-import org.base.config.JwtTokenSetup;
+import org.base.dto.UserDTO;
 import org.base.exception.UnauthorizationException;
 import org.base.exception.ValidationException;
 import org.base.model.UserModel;
@@ -9,20 +9,20 @@ import org.base.model.cache.TokenCache;
 import org.base.repositories.UserRepository;
 import org.base.repositories.cache.TokenCacheRepository;
 import org.base.services.UserService;
+import org.base.utils.Constants;
 import org.base.utils.StringUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Date;
 import java.util.Map;
 import java.util.Optional;
+import java.util.UUID;
 
 @Service
 public class UserServiceImpl implements UserService {
-
-    @Autowired
-    private JwtTokenSetup jwtTokenSetup;
 
     @Autowired
     private TokenCacheRepository  tokenCacheRepo;
@@ -31,69 +31,29 @@ public class UserServiceImpl implements UserService {
     private UserRepository userRepo;
 
     @Override
-    @Transactional
-    public String generateToken(Map<String, Object> bodyParam) {
-        String username = bodyParam.getOrDefault("username", "").toString();
-        String type = bodyParam.getOrDefault("type", "").toString().toUpperCase();
-        String code = bodyParam.getOrDefault("code", "").toString();
+    @Transactional(isolation = Isolation.SERIALIZABLE)
+    public UserModel saveOrUpdate(UserDTO userDTO) {
+        UserModel user = userRepo.getByUsernameAndType(userDTO.getUsername(), userDTO.getType());
 
-        if(StringUtil.isNullOrEmpty(username) || StringUtil.isNullOrEmpty(type) || StringUtil.isNullOrEmpty(code)) {
-            throw new ValidationException("Add info account to body!!");
+        if(user == null) {
+            user = new UserModel();
+            user.setUserId(UUID.randomUUID().toString());
+            user.setCreateAt(new Date());
+            user.setAvatar(userDTO.getAvatar());
+            user.setFullname(userDTO.getFullname());
+            user.setEmail(userDTO.getEmail());
+            user.setType(userDTO.getType());
+            user.setRoleCode(Constants.ROLE_CODE.STUDENT);
+            user.setUsername(userDTO.getUsername());
+
+            userRepo.save(user);
         }
 
-        UserModel user = userRepo.getByUsernameAndType(username, type);
-        if (user == null) {
-            throw new UnauthorizationException();
-        }
-        Optional<TokenCache> op = tokenCacheRepo.findById(code);
-        if(op.isEmpty()) {
-            throw new UnauthorizationException();
-        }
-        TokenCache tokenCache = op.get();
-        String token = jwtTokenSetup.generateToken(code);
-        Long currentTime = new Date().getTime();
-        tokenCache.setToken(token);
-        tokenCache.setCreateTime(currentTime);
-        tokenCache.setExpiredIn(currentTime + jwtTokenSetup.getTIMER());
-
-        tokenCacheRepo.save(tokenCache);
-        return token;
-    }
-
-    @Override
-    public boolean checkToken(Map<String, String> headerParam) {
-        String token = headerParam.getOrDefault("Authorization", "Bearer ");
-        try {
-            token = token.replaceAll("Bearer ", "");
-            Claims claims = jwtTokenSetup.getClaimsFromToken(token);
-
-            return tokenCacheRepo.findById(claims.getSubject()).isPresent();
-        } catch (Exception e) {
-            throw new UnauthorizationException();
-        }
+        return user;
     }
 
     @Override
     public Object getAllUser() {
         return userRepo.findAll();
-    }
-
-    @Override
-    public Object getUserInfo(Map<String, String> headerParam) {
-        String token = headerParam.getOrDefault("Authorization", "Bearer ");
-        token = token.replaceAll("Bearer ", "");
-        String code = jwtTokenSetup.getCodeFromToken(token);
-        Optional<TokenCache> cache = tokenCacheRepo.findById(code);
-
-        if(cache.isEmpty()) {
-            throw new UnauthorizationException("Token expired!!!");
-        }
-
-        UserModel user = userRepo.getByUsernameAndType(cache.get().getUsername(), cache.get().getType());
-        if(user == null) {
-            throw new UnauthorizationException("Token invalid!!!");
-        }
-
-        return user;
     }
 }
