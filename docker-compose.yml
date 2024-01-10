@@ -1,8 +1,62 @@
 version: '3'
+networks:
+  kong-net:
 services:
+  kong:
+    image: kong:latest
+    container_name: kong
+    restart: always
+    networks:
+      - kong-net
+    environment:
+      - KONG_DATABASE=postgres
+      - KONG_PG_HOST=postgresql
+      - KONG_PG_PORT=5432
+      - KONG_PG_USER=khoadt
+      - KONG_PG_PASSWORD=1
+      - KONG_PG_DATABASE=kong
+      - KONG_PROXY_ACCESS_LOG=/dev/stdout
+      - KONG_ADMIN_ACCESS_LOG=/dev/stdout
+      - KONG_PROXY_ERROR_LOG=/dev/stderr
+      - KONG_ADMIN_ERROR_LOG=/dev/stderr
+      - KONG_ADMIN_LISTEN=0.0.0.0:8001, 0.0.0.0:8444 ssl
+    depends_on:
+      - kong-migration
+      - postgresql
+    ports:
+      - "8000:8000"
+      - "8443:8443"
+      - "127.0.0.1:8001:8001"
+      - "127.0.0.1:8444:8444"
+      - "8002:8002"
+  kong-migration:
+    image: kong:latest
+    command: "kong migrations bootstrap"
+    container_name: kong-migration
+    restart: on-failure
+    networks:
+      - kong-net
+    environment:
+      - KONG_DATABASE=postgres
+      - KONG_PG_HOST=postgresql
+      - KONG_PG_PORT=5432
+      - KONG_PG_USER=khoadt
+      - KONG_PG_PASSWORD=1
+      - KONG_PG_DATABASE=kong
+    depends_on:
+      - postgresql
   zookeeper:
     container_name: zookeeper
-    image: zookeeper:3.4.13
+    image: confluentinc/cp-zookeeper:6.2.1
+    environment:
+      ALLOW_ANONYMOUS_LOGIN: yes
+      ZOOKEEPER_SERVER_ID: 2
+      ZOOKEEPER_CLIENT_PORT: 12181
+      ZOOKEEPER_PEER_PORT: 12888
+      ZOOKEEPER_LEADER_PORT: 13888
+      ZOOKEEPER_TICK_TIME: 2000
+      ZOOKEEPER_INIT_LIMIT: 5
+      ZOOKEEPER_SYNC_LIMIT: 2
     ports:
       - "2181:2181"
 
@@ -22,7 +76,6 @@ services:
       - zookeeper
   mongo:
     image: mongo
-    restart: always
     ports:
       - 27017:27017
     environment:
@@ -42,18 +95,32 @@ services:
       - database:/var/bin/mysql
   postgresql:
     image: "postgres:13.1"
+    networks:
+      - kong-net
     environment:
       POSTGRES_USER: khoadt
       POSTGRES_PASSWORD: 1
+      POSTGRES_DB: kong
     ports:
       - 5432:5432
     volumes:
       - database:/var/bin/postgresql
   redis:
     container_name: dxg-redis
+    restart: always
     image: redis:6.2.5
     ports:
       - '6379:6379'
+  elastic:
+    image: docker.elastic.co/elasticsearch/elasticsearch:7.10.0
+    ports:
+      - "9200:9200"
+      - "9300:9300"
+    volumes:
+      - database:/var/bin/elastic
+    environment:
+      - discovery.type=single-node
+      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
 
 volumes:
   zookeeper-data:

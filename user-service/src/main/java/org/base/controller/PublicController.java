@@ -68,4 +68,11 @@ public class PublicController {
         return ResponseEntity.ok(userService.getUserInfo(header));
     }
 
+
+    @GetMapping("/test-gateway")
+    public ResponseEntity testGateway(){
+        int[] numbers = {1, 2, 3, 4, 5, 6, 7, 8};
+        return ResponseEntity.ok(numbers);
+    }
+
 }

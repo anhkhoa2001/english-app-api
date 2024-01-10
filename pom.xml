@@ -11,13 +11,13 @@
   <modules>
     <module>core</module>
     <module>test</module>
-    <module>gateway</module>
     <module>user-service</module>
     <module>course-service</module>
     <module>exam-service</module>
     <module>dochub-service</module>
-      <module>blog-service</module>
+    <module>blog-service</module>
     <module>conversation-service</module>
+    <module>proxy</module>
   </modules>
 
 
