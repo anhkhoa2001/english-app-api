@@ -1,9 +1,12 @@
 package org.base.utils;
 
+import java.io.UnsupportedEncodingException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 public class StringUtil {
 
@@ -56,5 +59,11 @@ public class StringUtil {
 
     public static boolean isNullOrEmpty(String input) {
         return input == null || input.trim().isEmpty();
+    }
+
+    public static String convertToQueryString(Map<String, String> parameters) {
+        return parameters.entrySet().stream()
+                .map(entry -> entry.getKey() + "=" + entry.getValue())
+                .collect(Collectors.joining("&"));
     }
 }

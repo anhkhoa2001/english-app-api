@@ -78,6 +78,18 @@ public class AccessServiceImpl implements AccessService {
     }
 
     @Override
+    public void killToken(String token) {
+        String code = jwtTokenSetup.getCodeFromToken(token);
+        Optional<TokenCache> op = tokenCacheRepo.findById(code);
+
+        if(op.isEmpty()) {
+            throw new ValidationException("Token invalid");
+        }
+
+        tokenCacheRepo.delete(op.get());
+    }
+
+    @Override
     @Transactional
     public String getUrl(OAuth2User oAuth2User) {
         try {

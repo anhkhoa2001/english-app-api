@@ -1,12 +1,19 @@
 package org.base.config;
 
+import com.nimbusds.jwt.JWT;
+import com.nimbusds.jwt.JWTParser;
 import io.jsonwebtoken.*;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
+import org.base.model.cache.TokenCache;
+import org.base.repositories.cache.TokenCacheRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.stereotype.Component;
 
 import java.util.Date;
+import java.util.List;
 
 @Slf4j
 @Component
@@ -19,6 +26,9 @@ public class JwtTokenSetup {
     @Value("${secret.time_live}")
     private long TIMER;
 
+    @Autowired
+    private TokenCacheRepository tokenCacheRepo;
+
     public JwtTokenSetup() {}
 
     public String generateToken(String code) {
@@ -28,7 +38,6 @@ public class JwtTokenSetup {
         return Jwts.builder()
                 .setSubject(code)
                 .setIssuedAt(now)
-                .setExpiration(expiryDate)
                 .signWith(SignatureAlgorithm.HS512, SECRET_KEY)
                 .compact();
     }
@@ -49,12 +58,13 @@ public class JwtTokenSetup {
 
     public boolean validateToken(String authToken) {
         try {
-            Jwts.parser().setSigningKey(SECRET_KEY).parseClaimsJws(authToken);
-            return true;
-        } catch (MalformedJwtException ex) {
-            log.error("Sai token");
-        } catch (ExpiredJwtException ex) {
-            log.error("Token đã hết hạn");
+            String code = getCodeFromToken(authToken);
+            TokenCache tokenCache = tokenCacheRepo.findById(code).get();
+
+            return new Date().getTime() < tokenCache.getExpiredIn();
+        } catch (Exception ex) {
+            log.error("Tracking {} {}", ex.getClass(), ex.getMessage());
+            log.error("Token đã hết hạn hoặc không đúng!!");
         }
 
         return false;

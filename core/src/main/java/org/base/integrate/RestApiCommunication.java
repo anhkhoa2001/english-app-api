@@ -25,21 +25,27 @@ public class RestApiCommunication<T> {
     private String apiKey;
 
     public ResponseEntity<T> exchangeJsonUrl(HttpMethod method,
-                                                HttpHeaders headers,
-                                                String url,
-                                                String params,
-                                             Class<T> responseType) throws SystemException {
+                                            HttpHeaders headers,
+                                            String url,
+                                            String params,
+                                            Class<T> responseType) throws SystemException {
         ResponseEntity<T> response = null;
         headers.add("apikey", apiKey);
         headers.setContentType(MediaType.APPLICATION_JSON);
         try {
             URI uri = new URI(url);
             HttpEntity<String> entity = new HttpEntity(params, headers);
+            log.info("Api key {}", apiKey);
+            log.info("Header {}", headers);
+            log.info("Body {}", params);
+            log.info("Uri {}", uri);
+
             response = restTemplate.exchange(uri, method, entity, responseType);
 
+            log.info("Response {}", response);
             return response;
         } catch (Exception e) {
-            e.printStackTrace();
+            log.error("Call api to gateway kong failed {} {}", e.getClass(), e.getMessage());
             throw new SystemException("Call to " + url + " failed!!");
         }
     }

@@ -6,7 +6,7 @@ server:
 spring:
   datasource:
     password: 1
-    url: jdbc:postgresql://localhost:5432/user_service?currentSchema=user_schema
+    url: jdbc:postgresql://localhost:5432/user_service?currentSchema=user
     username: khoadt
   jpa:
     hibernate:

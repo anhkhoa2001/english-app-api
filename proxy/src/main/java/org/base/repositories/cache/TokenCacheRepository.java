@@ -1,12 +1,16 @@
 package org.base.repositories.cache;
 
+import org.base.dao.cache.TokenCacheDao;
 import org.base.model.cache.TokenCache;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
 
-@Repository
-public interface TokenCacheRepository extends CrudRepository<TokenCache, String> {
-    TokenCache findByUsernameAndType(String username, String type);
+import java.util.List;
 
-    TokenCache findTokenCacheByToken(String token);
+@Repository
+public interface TokenCacheRepository extends CrudRepository<TokenCache, String>, TokenCacheDao {
+    TokenCache findByUsernameAndType(String username, String type);
+    List<TokenCache> findAllByToken(String token);
+
+    List<TokenCache> findAllByUsername(String username);
 }

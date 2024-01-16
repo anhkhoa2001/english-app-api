@@ -5,8 +5,7 @@
   <artifactId>english-app</artifactId>
   <version>1.0</version>
   <packaging>pom</packaging>
-  <name>Archetype - web-core</name>
-  <url>http://maven.apache.org</url>
+  <name>english-app-api</name>
 
   <modules>
     <module>core</module>
