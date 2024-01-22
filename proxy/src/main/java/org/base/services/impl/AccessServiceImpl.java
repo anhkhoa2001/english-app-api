@@ -14,6 +14,7 @@ import org.base.model.cache.TokenCache;
 import org.base.repositories.cache.TokenCacheRepository;
 import org.base.services.AccessService;
 import org.base.utils.Constants;
+import org.base.utils.ExceptionUtils;
 import org.base.utils.StringUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -23,7 +24,10 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.context.request.ServletRequestAttributes;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.Date;
 import java.util.Map;
 import java.util.Optional;
@@ -54,27 +58,48 @@ public class AccessServiceImpl implements AccessService {
     @Override
     @Transactional
     public String generateToken(Map<String, Object> bodyParam) {
-        String username = bodyParam.getOrDefault("username", "").toString();
-        String type = bodyParam.getOrDefault("type", "").toString().toUpperCase();
-        String code = bodyParam.getOrDefault("code", "").toString();
+        HttpServletRequest request =
+                ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes())
+                        .getRequest();
+        try {
+            String username = bodyParam.getOrDefault("username", "").toString();
+            String type = bodyParam.getOrDefault("type", "").toString().toUpperCase();
+            String code = bodyParam.getOrDefault("code", "").toString();
 
-        if(StringUtil.isNullOrEmpty(username) || StringUtil.isNullOrEmpty(type) || StringUtil.isNullOrEmpty(code)) {
-            throw new ValidationException("Add info account to body!!");
+            if(StringUtil.isNullOrEmpty(username) || StringUtil.isNullOrEmpty(type) || StringUtil.isNullOrEmpty(code)) {
+                throw new ValidationException("Add info account to body!!");
+            }
+
+            Optional<TokenCache> op = tokenCacheRepo.findById(code);
+            if(op.isEmpty()) {
+                throw new UnauthorizationException();
+            }
+            TokenCache tokenCache = op.get();
+            String token = jwtTokenSetup.generateToken(code, username);
+            Long currentTime = new Date().getTime();
+            tokenCache.setToken(token);
+            tokenCache.setCreateTime(currentTime);
+            tokenCache.setExpiredIn(currentTime + jwtTokenSetup.getTIMER());
+
+            tokenCacheRepo.save(tokenCache);
+            return token;
+        } catch (Exception e) {
+            ExceptionUtils.printException(e, request.getRequestURI(), bodyParam);
+
+            throw new SystemException("Server failed");
         }
+    }
 
+    @Override
+    public void killToken(String token) {
+        String code = jwtTokenSetup.getCodeFromToken(token);
         Optional<TokenCache> op = tokenCacheRepo.findById(code);
-        if(op.isEmpty()) {
-            throw new UnauthorizationException();
-        }
-        TokenCache tokenCache = op.get();
-        String token = jwtTokenSetup.generateToken(code);
-        Long currentTime = new Date().getTime();
-        tokenCache.setToken(token);
-        tokenCache.setCreateTime(currentTime);
-        tokenCache.setExpiredIn(currentTime + jwtTokenSetup.getTIMER());
 
-        tokenCacheRepo.save(tokenCache);
-        return token;
+        if(op.isEmpty()) {
+            throw new ValidationException("Token invalid");
+        }
+
+        tokenCacheRepo.delete(op.get());
     }
 
     @Override

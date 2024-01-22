@@ -55,10 +55,10 @@ public class AzureBlobServiceImpl implements AzureBlobService {
     public ByteArrayOutputStream getDataFile(String filename) {
         ShareFileClient share = shareClient.getDirectoryClient("js").getFileClient(filename);
         ShareDirectoryClient shareRoot = shareClient.getRootDirectoryClient();
-        shareRoot.
+        /*shareRoot.
         ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
-        share.download(byteArrayOutputStream);
-        return byteArrayOutputStream;
+        share.download(byteArrayOutputStream);*/
+        return null;
     }
 
     public String upload(EFile file){

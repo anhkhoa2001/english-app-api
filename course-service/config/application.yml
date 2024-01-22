@@ -5,7 +5,7 @@ server:
 spring:
   datasource:
     password: 1
-    url: jdbc:postgresql://localhost:5432/course_service?currentSchema=user
+    url: jdbc:postgresql://localhost:5432/course_service?currentSchema=course
     username: khoadt
   jpa:
     hibernate:
@@ -15,6 +15,13 @@ spring:
         physical-strategy: org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl
     database-platform: org.hibernate.dialect.PostgreSQLDialect
     show-sql: true
+
+#config s3
+amazon:
+  s3:
+    bucket: demo-bucket010101012001
+  region:  us-east-1
+
 
 #config azure
 azure:

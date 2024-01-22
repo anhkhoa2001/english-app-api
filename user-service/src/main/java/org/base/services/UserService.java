@@ -10,4 +10,6 @@ public interface UserService {
     UserModel saveOrUpdate(UserDTO userDTO);
 
     Object getAllUser();
+
+    UserModel getUserInfo(String username);
 }

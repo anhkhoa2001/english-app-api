@@ -9,4 +9,6 @@ public interface AccessService {
     String getUrl(OAuth2User oAuth2User);
 
     String generateToken(Map<String, Object> bodyParam);
+
+    void killToken(String token);
 }

@@ -5,9 +5,6 @@ services:
   kong:
     image: kong:latest
     container_name: kong
-    restart: always
-    networks:
-      - kong-net
     environment:
       - KONG_DATABASE=postgres
       - KONG_PG_HOST=postgresql
@@ -20,9 +17,8 @@ services:
       - KONG_PROXY_ERROR_LOG=/dev/stderr
       - KONG_ADMIN_ERROR_LOG=/dev/stderr
       - KONG_ADMIN_LISTEN=0.0.0.0:8001, 0.0.0.0:8444 ssl
-    depends_on:
-      - kong-migration
-      - postgresql
+    networks:
+      - kong-net
     ports:
       - "8000:8000"
       - "8443:8443"

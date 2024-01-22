@@ -9,9 +9,13 @@ import org.base.model.cache.TokenCache;
 import org.base.repositories.cache.TokenCacheRepository;
 import org.base.services.AccessService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.web.bind.annotation.*;
 
+import java.net.URI;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
@@ -26,17 +30,14 @@ public class PublicController {
     private JwtTokenSetup jwtTokenSetup;
 
     @Autowired
-    private TokenCacheRepository tokenCacheRepo;
-
-    @Autowired
     private AccessService accessService;
 
     @GetMapping("/check-token")
     public ResponseEntity checkLogin(@RequestHeader("Authorization") String token) {
         token = token.replaceAll("Bearer ", "");
-        Claims claims = jwtTokenSetup.getClaimsFromToken(token);
+        boolean isno = jwtTokenSetup.validateToken(token);
 
-        if(claims.getSubject().isEmpty()) {
+        if(!isno) {
             throw new UnauthorizationException();
         }
 
@@ -46,13 +47,7 @@ public class PublicController {
     @GetMapping("/kill-token")
     public ResponseEntity killToken(@RequestHeader("Authorization") String token) {
         token = token.replaceAll("Bearer ", "");
-        Claims claims = jwtTokenSetup.getClaimsFromToken(token);
-
-        Optional<TokenCache> tokenCache = tokenCacheRepo.findById(claims.getSubject());
-        if(tokenCache.isEmpty()) {
-            throw new UnauthorizationException();
-        }
-        tokenCacheRepo.delete(tokenCache.get());
+        accessService.killToken(token);
         return ResponseEntity.ok("DONE!");
     }
 
@@ -61,4 +56,15 @@ public class PublicController {
         return ResponseEntity.ok(accessService.generateToken(bodyParam));
     }
 
+    @GetMapping("/redirect-to-react-app")
+    public ResponseEntity<Void> redirectToReactApp(@AuthenticationPrincipal OAuth2User oAuth2User) {
+        return ResponseEntity.status(HttpStatus.FOUND)
+                .location(URI.create(accessService.getUrl(oAuth2User)))
+                .build();
+    }
+
+    @GetMapping("/test")
+    public ResponseEntity test(){
+        return ResponseEntity.ok("done test");
+    }
 }

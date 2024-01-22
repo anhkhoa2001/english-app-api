@@ -5,9 +5,9 @@ server:
     context-path: /api
 spring:
   datasource:
-    password: 1
-    url: jdbc:postgresql://localhost:5432/user_service?currentSchema=user_schema
-    username: khoadt
+    password: zkU4xyjQNLCTO4EcllgmQfyOWPyeuFS1
+    url: jdbc:postgresql://dpg-cml5bl2cn0vc739natag-a.singapore-postgres.render.com:5432/user_y053?currentSchema=user
+    username: khoadamtam
   jpa:
     hibernate:
       ddl-auto: update
@@ -17,8 +17,9 @@ spring:
     database-platform: org.hibernate.dialect.PostgreSQLDialect
     show-sql: true
   redis:
-    host: localhost
-    port: 6379
+    host: redis-11060.c323.us-east-1-2.ec2.cloud.redislabs.com
+    port: 11060
+    password: 6rMa7nxneNIvhj56vqJwvb6Ud7HzMNmc
 
 kong:
   api-key: JPrxbq2bbX6nJTJbu7INIameRUH6dRZn
