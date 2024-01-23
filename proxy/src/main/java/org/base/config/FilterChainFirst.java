@@ -55,7 +55,7 @@ public class FilterChainFirst extends OncePerRequestFilter {
         } catch (Exception e) {
             log.error("Tracking {} {}", e.getClass(), e.getMessage());
             log.error("URL {}", request.getRequestURI());
-            response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Token invalid or expired");
+            response.sendError(HttpServletResponse.SC_OK, "Token invalid or expired");
 
             return false;
         }
