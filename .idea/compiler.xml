@@ -9,24 +9,25 @@
         <sourceOutputDir name="target/generated-sources/annotations" />
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
-        <module name="course-service" />
         <module name="core" />
-        <module name="proxy" />
-        <module name="conversation-service" />
         <module name="test" />
-        <module name="user-service" />
-        <module name="blog-service" />
-        <module name="exam-service" />
-        <module name="dochub-service" />
+        <module name="api" />
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>
+      <module name="blog-service" target="11" />
+      <module name="conversation-service" target="11" />
+      <module name="course-service" target="11" />
+      <module name="dochub-service" target="11" />
       <module name="english-app-api" target="1.8" />
+      <module name="exam-service" target="11" />
       <module name="gateway" target="11" />
+      <module name="user-service" target="11" />
     </bytecodeTargetLevel>
   </component>
   <component name="JavacSettings">
     <option name="ADDITIONAL_OPTIONS_OVERRIDE">
+      <module name="api" options="-parameters" />
       <module name="blog-service" options="-parameters" />
       <module name="conversation-service" options="-parameters" />
       <module name="core" options="-parameters" />
@@ -34,7 +35,6 @@
       <module name="dochub-service" options="-parameters" />
       <module name="exam-service" options="-parameters" />
       <module name="gateway" options="-parameters" />
-      <module name="proxy" options="-parameters" />
       <module name="test" options="-parameters" />
       <module name="user-service" options="-parameters" />
     </option>

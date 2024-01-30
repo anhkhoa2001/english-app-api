@@ -113,7 +113,7 @@ services:
       - "9200:9200"
       - "9300:9300"
     volumes:
-      - database:/var/bin/elastic
+      - elasticdb:/var/bin/elastic
     environment:
       - discovery.type=single-node
       - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
@@ -122,3 +122,4 @@ volumes:
   zookeeper-data:
   kafka-data:
   database:
+  elasticdb:
