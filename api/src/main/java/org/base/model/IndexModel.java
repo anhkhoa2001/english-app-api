@@ -18,4 +18,7 @@ public class IndexModel {
 
     @Column(name = "code", unique = true)
     private String code;
+
+    @Version
+    private int version;
 }

@@ -16,11 +16,17 @@ public class StringUtil {
     }
 
     public static boolean isListEmpty(List input) {
-        return input != null && !input.isEmpty();
+        return input == null || input.isEmpty();
     }
 
     public static boolean isObject(Object object) {
         return object != null;
+    }
+
+    public static String nvl(Object objInput, String strNullValue) {
+        if (objInput == null)
+            return strNullValue;
+        return objInput.toString();
     }
 
     public static String generatorCurrentDateTime() {

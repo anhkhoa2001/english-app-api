@@ -1,6 +1,8 @@
 
 package org.base.services;
 
+import org.base.model.IndexModel;
+import org.base.model.cache.IndexCache;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 
 import java.util.Map;
@@ -13,5 +15,7 @@ public interface AccessService {
 
     void killToken(String token);
 
-    void saveIndex(String code);
+    IndexModel saveIndex(String code);
+
+    IndexCache saveIndexCache(String id) throws InterruptedException;
 }

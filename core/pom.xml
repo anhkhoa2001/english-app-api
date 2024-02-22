@@ -8,9 +8,7 @@
     </parent>
     <artifactId>core</artifactId>
     <version>1.0</version>
-    <name>Archetype - core</name>
     <groupId>org.base</groupId>
-    <url>http://maven.apache.org</url>
 
     <dependencies>
         <dependency>

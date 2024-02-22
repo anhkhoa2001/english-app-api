@@ -1,7 +1,7 @@
 
 package org.base.repositories.cache;
 
-import org.base.dao.cache.TokenCacheDao;
+import org.base.dao.TokenCacheDao;
 import org.base.model.cache.TokenCache;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;

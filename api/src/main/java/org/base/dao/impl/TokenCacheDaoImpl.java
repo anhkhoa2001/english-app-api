@@ -1,16 +1,11 @@
 
-package org.base.dao.cache.impl;
+package org.base.dao.impl;
 
-import org.base.dao.cache.TokenCacheDao;
+import org.base.dao.TokenCacheDao;
 import org.base.model.cache.TokenCache;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.redis.core.HashOperations;
-import org.springframework.data.redis.core.SetOperations;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
-import java.util.Set;
-import java.util.stream.Collectors;
 
 @Repository
 public class TokenCacheDaoImpl implements TokenCacheDao {

@@ -2,19 +2,20 @@
 package org.base.services.impl;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.nimbusds.jwt.JWT;
 import lombok.extern.slf4j.Slf4j;
 import org.base.config.JwtTokenSetup;
 import org.base.dto.UserDTO;
 import org.base.dto.common.MessageResponseDTO;
+import org.base.exception.AppException;
 import org.base.exception.SystemException;
 import org.base.exception.UnauthorizationException;
 import org.base.exception.ValidationException;
 import org.base.integrate.RestApiCommunication;
 import org.base.model.IndexModel;
+import org.base.model.cache.IndexCache;
 import org.base.model.cache.TokenCache;
 import org.base.repositories.IndexRepository;
-import org.base.repositories.UserRepository;
+import org.base.repositories.cache.IndexCacheRepository;
 import org.base.repositories.cache.TokenCacheRepository;
 import org.base.services.AccessService;
 import org.base.utils.Constants;
@@ -32,11 +33,11 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 import javax.servlet.http.HttpServletRequest;
-import java.util.Date;
-import java.util.Map;
-import java.util.Optional;
-import java.util.UUID;
+import java.time.LocalTime;
+import java.util.*;
 
 @Service
 @Slf4j
@@ -62,6 +63,13 @@ public class AccessServiceImpl implements AccessService {
 
     @Autowired
     private IndexRepository indexRepository;
+
+    @Autowired
+    private IndexCacheRepository indexCacheRepository;
+
+    @PersistenceContext
+    private EntityManager entityManager;
+
 
     @Override
     @Transactional
@@ -112,18 +120,72 @@ public class AccessServiceImpl implements AccessService {
 
     @Override
     @Transactional(isolation = Isolation.SERIALIZABLE)
-    public void saveIndex(String code) {
-        IndexModel indexModel = indexRepository.getByCode(code);
+    public IndexModel saveIndex(String code) {
+        log.info("Time current: {}", new Date());
+        try {
+            // Lấy thời gian hiện tại
+            LocalTime currentTime = LocalTime.now();
 
-        if(indexModel == null) {
-            indexModel = new IndexModel();
-            indexModel.setIndex(0L);
-            indexModel.setCode(code);
+            // Tính thời gian chênh lệch để đến 10:30:05
+            int delaySeconds = 60 - currentTime.getSecond();
+
+            // Đợi cho đến khi đến thời gian 10:30:05
+            log.info("=================== delay time {}", delaySeconds);
+            Thread.sleep(delaySeconds * 1000);
+
+            IndexModel indexModel = indexRepository.getByCode(code);
+
+            if(indexModel == null) {
+                indexModel = new IndexModel();
+                indexModel.setIndex(0L);
+                indexModel.setCode(code);
+
+                indexRepository.save(indexModel);
+            } else {
+                indexModel.setIndex(indexModel.getIndex() + 1);
+                indexRepository.update(indexModel.getIndex(), indexModel.getCode());
+            }
+
+            log.error("value index {}", indexModel.getIndex());
+
+            return indexModel;
+        } catch (Exception e) {
+            log.error("optimistic loi r {}", e.getClass());
+            return new IndexModel();
+        }
+    }
+
+    @Override
+    public synchronized IndexCache saveIndexCache(String id) throws InterruptedException {
+        Optional<IndexCache> op = indexCacheRepository.findById(id);
+        IndexCache cachedIndex = new IndexCache();
+        if (op.isEmpty()) {
+            // Tạo mới một IndexCache
+            IndexCache index = new IndexCache();
+            int count = 0;
+            index.setId(id);
+            index.setCount(1);
+            index.setCreateAt(new Date());
+
+            cachedIndex = index;
         } else {
-            indexModel.setIndex(indexModel.getIndex() + 1);
+            IndexCache index = op.get();
+
+            int count = index.getCount() + 1;
+            index.setCount(count);
+
+            cachedIndex = index;
         }
 
-        indexRepository.save(indexModel);
+        log.info("index {}", cachedIndex.getCount());
+        //indexCacheRepository.save(cachedIndex);
+        //redisTemplate.opsForHash().put("index_cache1", cachedIndex.getId(), cachedIndex);
+        indexCacheRepository.save(cachedIndex);
+
+        if(Math.random() % 2 == 0) {
+            throw new AppException("loi");
+        }
+        return cachedIndex;
     }
 
     @Override

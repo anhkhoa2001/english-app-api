@@ -1,5 +1,5 @@
 
-package org.base.dao.cache;
+package org.base.dao;
 
 import org.base.model.cache.TokenCache;
 
