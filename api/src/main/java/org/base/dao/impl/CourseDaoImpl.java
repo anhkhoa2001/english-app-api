@@ -10,8 +10,6 @@ import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.stereotype.Component;
 
 import java.sql.Timestamp;
-import java.time.LocalDateTime;
-import java.time.ZoneId;
 import java.util.*;
 
 @Component
@@ -28,7 +26,6 @@ public class CourseDaoImpl implements CourseDao {
         StringBuilder sb = new StringBuilder();
 
         sb.append(" SELECT * FROM U_COURSE ");
-
 
         sb.append(" LIMIT :pageSize OFFSET :page ");
         source.addValue("pageSize", request.getPageSize());

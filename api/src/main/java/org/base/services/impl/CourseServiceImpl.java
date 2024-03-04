@@ -10,9 +10,11 @@ import org.base.services.CourseService;
 import org.base.utils.StringUtil;
 import org.postgresql.util.PSQLException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.util.Date;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
@@ -62,8 +64,8 @@ public class CourseServiceImpl implements CourseService {
     }
 
     @Override
-    public Map<String, Object> getAll(CourseRequest request) {
-        return courseRepository.getAll(request);
+    public List<CourseModel> getAll(CourseRequest request) {
+        return courseRepository.findAll(Sort.by(Sort.Direction.DESC, "createAt"));
     }
 
     @Override
@@ -93,7 +95,7 @@ public class CourseServiceImpl implements CourseService {
     @Override
     public CourseModel getByCode(String code) {
         try {
-            CourseModel courseModel =  courseRepository.findById(code).get();
+            CourseModel courseModel = courseRepository.findById(code).get();
             return courseModel;
         } catch (Exception e) {
         }

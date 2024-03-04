@@ -2,13 +2,17 @@ package org.base.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
 import javax.persistence.*;
+import java.util.List;
 import java.util.Set;
 
 @Entity
 @Table(name = "U_SECTION")
-@Data
+@Getter
+@Setter
 public class SectionModel {
 
     @Id
@@ -32,6 +36,6 @@ public class SectionModel {
     @Transient
     private String courseCode;
 
-    @OneToMany(mappedBy="sectionModel", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-    private Set<LessonModel> lessons;
+    @OneToMany(mappedBy="sectionModel", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    private List<LessonModel> lessons;
 }

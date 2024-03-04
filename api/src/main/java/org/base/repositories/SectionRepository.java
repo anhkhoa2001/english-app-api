@@ -6,4 +6,6 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface SectionRepository extends JpaRepository<SectionModel, Integer> {
+
+    SectionModel getBySectionName(String sectionName);
 }

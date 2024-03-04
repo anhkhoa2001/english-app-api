@@ -5,6 +5,7 @@ import lombok.*;
 
 import javax.persistence.*;
 import java.util.Date;
+import java.util.List;
 import java.util.Set;
 
 @Entity
@@ -49,7 +50,7 @@ public class CourseModel {
     @Column(name = "RATE")
     private double rate;
 
-    @OneToMany(mappedBy = "courseModel", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-    private Set<SectionModel> sections;
+    @OneToMany(mappedBy = "courseModel", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    private List<SectionModel> sections;
 }
 

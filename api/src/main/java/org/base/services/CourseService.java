@@ -11,7 +11,7 @@ public interface CourseService {
 
     CourseModel create(CourseItemDTO item);
 
-    Map<String, Object> getAll(CourseRequest request);
+    List<CourseModel> getAll(CourseRequest request);
 
     CourseModel update(CourseItemDTO item);
 
