@@ -92,6 +92,11 @@ public class CourseServiceImpl implements CourseService {
 
     @Override
     public CourseModel getByCode(String code) {
-        return courseRepository.findById(code).get();
+        try {
+            CourseModel courseModel =  courseRepository.findById(code).get();
+            return courseModel;
+        } catch (Exception e) {
+        }
+        return null;
     }
 }

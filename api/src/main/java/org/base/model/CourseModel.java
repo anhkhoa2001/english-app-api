@@ -1,18 +1,21 @@
 package org.base.model;
 
-import lombok.Data;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import lombok.*;
 
 import javax.persistence.*;
 import java.util.Date;
 import java.util.Set;
 
-@Data
 @Entity
 @Table(name = "U_COURSE")
+@Getter
+@Setter
 public class CourseModel {
 
     @Id
     private String code;
+
     @Column(name = "COURSE_NAME")
     private String courseName;
 
@@ -46,7 +49,7 @@ public class CourseModel {
     @Column(name = "RATE")
     private double rate;
 
-    @OneToMany(mappedBy="section", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "courseModel", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private Set<SectionModel> sections;
-
 }
+

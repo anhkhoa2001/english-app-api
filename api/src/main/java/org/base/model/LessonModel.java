@@ -1,18 +1,19 @@
 package org.base.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
 
 import javax.persistence.*;
 import java.util.Date;
 
 @Entity
-@Table(name = "U_LESSON")
+@Table(name = "u_lesson")
 @Data
 public class LessonModel {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int id;
+    private Integer lesson_id;
 
     @Column(name = "LESSON_NAME", nullable = false)
     private String lessionName;
@@ -26,7 +27,7 @@ public class LessonModel {
     @Column(name = "URL_VIDEO")
     private String url_video;
 
-    @Column(name = "DESCRIPTION", length = Integer.MAX_VALUE)
+    @Column(name = "DESCRIPTION")
     private String description;
 
     @Column(name = "CREATE_BY")
@@ -35,7 +36,11 @@ public class LessonModel {
     @Column(name = "CREATE_AT")
     private Date createAt;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name="section_id", nullable=false)
+    @ManyToOne
+    @JoinColumn(name="section_ref_id", nullable=false)
+    @JsonIgnore
     private SectionModel sectionModel;
+
+    @Transient
+    private Integer section_id;
 }

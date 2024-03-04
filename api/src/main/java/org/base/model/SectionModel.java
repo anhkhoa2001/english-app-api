@@ -1,5 +1,6 @@
 package org.base.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
 
 import javax.persistence.*;
@@ -12,10 +13,11 @@ public class SectionModel {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int id;
+    private Integer section_id;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne
     @JoinColumn(name="course_code", nullable=false)
+    @JsonIgnore
     private CourseModel courseModel;
 
     @Column(name = "SECTION_NAME", nullable = false)
@@ -27,6 +29,9 @@ public class SectionModel {
     @Column(name = "STATUS")
     private boolean status;
 
-    @OneToMany(mappedBy="lesson", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @Transient
+    private String courseCode;
+
+    @OneToMany(mappedBy="sectionModel", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private Set<LessonModel> lessons;
 }
