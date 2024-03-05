@@ -155,6 +155,24 @@ public class FileServiceImpl implements FileService {
         }
     }
 
+    @Override
+    public Object getAll() {
+        try {
+            ListObjectsRequest objectsRequest = new ListObjectsRequest().withBucketName(s3BucketName);
+
+            ObjectListing objectListing = s3Client.listObjects(objectsRequest);
+            List<S3ObjectSummary> objectSummaries = objectListing.getObjectSummaries();
+
+            objectSummaries.forEach(e -> {
+                e.setStorageClass(url + e.getKey());
+            });
+
+            return objectSummaries;
+        } catch (Exception e) {
+            throw new AppException(e.getMessage());
+        }
+    }
+
     private String createPath(String username, String filename) {
         return username + "/" + LocalDate.now().getYear() + "/" + LocalDate.now().getMonthValue() +
                 "/" + LocalDate.now().getDayOfMonth() + "/" + filename;

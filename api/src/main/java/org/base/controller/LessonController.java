@@ -3,7 +3,6 @@ package org.base.controller;
 import lombok.extern.slf4j.Slf4j;
 import org.base.config.EnableWrapResponse;
 import org.base.dto.lesson.LessonDTO;
-import org.base.model.LessonModel;
 import org.base.services.LessonService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -26,5 +25,16 @@ public class LessonController {
     @GetMapping("/get-by-lesson-id")
     public ResponseEntity getByLessonId(@RequestParam Integer lessonId) {
         return ResponseEntity.ok(lessonService.getByLessonId(lessonId));
+    }
+
+    @PostMapping("/update")
+    public ResponseEntity update(@RequestBody LessonDTO dto) {
+        return ResponseEntity.ok(lessonService.update(dto));
+    }
+
+    @DeleteMapping("/delete")
+    public ResponseEntity delete(@RequestParam Integer lessonId) {
+        lessonService.deleteByLessonId(lessonId);
+        return ResponseEntity.ok("DONE");
     }
 }

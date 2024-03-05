@@ -1,13 +1,11 @@
-package org.base.model;
+package org.base.model.course;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
 
 import javax.persistence.*;
 import java.util.List;
-import java.util.Set;
 
 @Entity
 @Table(name = "U_SECTION")
@@ -36,6 +34,6 @@ public class SectionModel {
     @Transient
     private String courseCode;
 
-    @OneToMany(mappedBy="sectionModel", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @OneToMany(mappedBy="sectionModel", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private List<LessonModel> lessons;
 }

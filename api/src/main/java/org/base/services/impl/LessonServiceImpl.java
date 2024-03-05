@@ -5,16 +5,18 @@ import org.base.dao.FileDao;
 import org.base.dto.lesson.LessonDTO;
 import org.base.exception.AppException;
 import org.base.exception.SystemException;
-import org.base.model.CourseModel;
-import org.base.model.LessonModel;
-import org.base.model.SectionModel;
+import org.base.model.course.LessonModel;
+import org.base.model.course.SectionModel;
 import org.base.repositories.LessonRepository;
 import org.base.repositories.SectionRepository;
 import org.base.services.LessonService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -71,7 +73,53 @@ public class LessonServiceImpl implements LessonService {
             log.error("Occur error when get lesson!!!");
             log.error("{} | {}", e.getClass(), e.getMessage());
 
-            throw new AppException("create section failed!!!");
+            throw new AppException("create lesson failed!!!");
+        }
+    }
+
+    @Override
+    @Transactional
+    public void deleteByLessonId(Integer lessonId) {
+        try {
+            List<Integer> ids = new ArrayList<>();
+            ids.add(lessonId);
+
+            lessonRepository.deleteByListId(ids);
+        } catch (Exception e) {
+            log.error("Occur error when delete lesson by id!!!");
+            log.error("{} | {}", e.getClass(), e.getMessage());
+
+            throw new AppException("delete lesson failed!!!");
+        }
+    }
+
+    @Override
+    public LessonModel update(LessonDTO dto) {
+        try {
+            Optional<SectionModel> opSec = sectionRepository.findById(dto.getSection_id());
+            if(opSec.isEmpty()) {
+                throw new SystemException("lesson code not exist!!!");
+            }
+            LessonModel lessonModel = lessonRepository.getByLessionNameAndSectionR(dto.getLessonName(), dto.getSection_id());
+            if(lessonModel == null) {
+                throw new SystemException("Lesson already not exist!!");
+            }
+
+            lessonModel.setDescription(dto.getDes());
+            lessonModel.setLessionName(dto.getLessonName());
+            lessonModel.setStatus(dto.isStatus());
+            lessonModel.setThumbnail(fileDao.getUrlInFile(dto.getThumbnail()));
+            lessonModel.setUrl_video(fileDao.getUrlInFile(dto.getVideo()));
+            lessonModel.setSectionModel(opSec.get());
+
+            lessonModel = lessonRepository.save(lessonModel);
+
+            return lessonModel;
+        } catch (Exception e) {
+            log.error("Occur error when update lesson!!!");
+            log.error("{} | {}", e.getClass(), e.getMessage());
+
+            throw new SystemException(e.getMessage());
         }
     }
 }

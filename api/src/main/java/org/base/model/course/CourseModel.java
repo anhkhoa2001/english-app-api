@@ -1,12 +1,10 @@
-package org.base.model;
+package org.base.model.course;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
 
 import javax.persistence.*;
 import java.util.Date;
 import java.util.List;
-import java.util.Set;
 
 @Entity
 @Table(name = "U_COURSE")
@@ -50,7 +48,7 @@ public class CourseModel {
     @Column(name = "RATE")
     private double rate;
 
-    @OneToMany(mappedBy = "courseModel", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "courseModel", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private List<SectionModel> sections;
 }
 

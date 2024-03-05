@@ -12,4 +12,6 @@ public interface FileService {
     URL getPresignURL(String filename);
 
     void deleteObjectS3(String filename, String username);
+
+    Object getAll();
 }

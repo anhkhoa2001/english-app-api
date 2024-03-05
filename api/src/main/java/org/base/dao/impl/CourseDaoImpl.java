@@ -2,7 +2,7 @@ package org.base.dao.impl;
 
 import org.base.dao.CourseDao;
 import org.base.dto.course.CourseRequest;
-import org.base.model.CourseModel;
+import org.base.model.course.CourseModel;
 import org.base.utils.StringUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;

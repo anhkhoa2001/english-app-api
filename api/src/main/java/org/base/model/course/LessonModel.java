@@ -1,4 +1,4 @@
-package org.base.model;
+package org.base.model.course;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
@@ -43,4 +43,5 @@ public class LessonModel {
 
     @Transient
     private Integer section_id;
+
 }

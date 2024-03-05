@@ -2,10 +2,9 @@ package org.base.services;
 
 import org.base.dto.course.CourseItemDTO;
 import org.base.dto.course.CourseRequest;
-import org.base.model.CourseModel;
+import org.base.model.course.CourseModel;
 
 import java.util.List;
-import java.util.Map;
 
 public interface CourseService {
 

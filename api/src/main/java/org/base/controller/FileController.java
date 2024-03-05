@@ -25,4 +25,10 @@ public class FileController {
     public ResponseEntity uploadToCloud(@RequestPart MultipartFile file) throws IOException {
         return ResponseEntity.ok(fileService.saveFileToCloud(file.getOriginalFilename(), file.getInputStream(), file.getSize(), null));
     }
+
+    @PostMapping("/get-all")
+    @IgnoreWrapResponse
+    public ResponseEntity getAll() throws IOException {
+        return ResponseEntity.ok(fileService.getAll());
+    }
 }

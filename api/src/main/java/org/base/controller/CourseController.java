@@ -30,6 +30,11 @@ public class CourseController {
         return ResponseEntity.ok(courseService.create(item));
     }
 
+    @PostMapping("/update")
+    public ResponseEntity updateCourse(@RequestBody CourseItemDTO item) {
+        return ResponseEntity.ok(courseService.update(item));
+    }
+
     @GetMapping("/get-by-code")
     public ResponseEntity getByCode(@RequestParam String code) {
         return ResponseEntity.ok(courseService.getByCode(code));
