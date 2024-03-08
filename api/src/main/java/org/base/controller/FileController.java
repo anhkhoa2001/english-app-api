@@ -26,6 +26,13 @@ public class FileController {
         return ResponseEntity.ok(fileService.saveFileToCloud(file.getOriginalFilename(), file.getInputStream(), file.getSize(), null));
     }
 
+    @PostMapping("/upload-for-ckeditor")
+    @IgnoreWrapResponse
+    public ResponseEntity uploadForCKEditor(@RequestPart MultipartFile upload) throws IOException {
+        return ResponseEntity.ok(fileService.saveFileToCloud(upload.getOriginalFilename(), upload.getInputStream(),
+                upload.getSize(), null));
+    }
+
     @PostMapping("/get-all")
     @IgnoreWrapResponse
     public ResponseEntity getAll() throws IOException {

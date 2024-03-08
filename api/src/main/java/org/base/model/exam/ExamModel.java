@@ -4,6 +4,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 import javax.persistence.*;
+import java.util.Date;
 import java.util.List;
 
 @Entity
@@ -31,8 +32,17 @@ public class ExamModel {
     @Column(name = "TYPE")
     private String type;
 
+    @Column(name = "STATUS")
+    private boolean status;
+
     @Column(name = "THUMBNAIL")
     private String thumbnail;
+
+    @Column(name = "CREATE_BY")
+    private String createBy;
+
+    @Column(name = "CREATE_AT")
+    private Date createAt;
 
     @OneToMany(mappedBy = "examModel", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<ExamPartModel> parts;
