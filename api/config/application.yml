@@ -28,9 +28,11 @@ secret:
 
 spring:
   datasource:
-    password: zkU4xyjQNLCTO4EcllgmQfyOWPyeuFS1
-    url: jdbc:postgresql://dpg-cml5bl2cn0vc739natag-a.singapore-postgres.render.com:5432/user_y053?currentSchema=user
-    username: khoadamtam
+    #password: zkU4xyjQNLCTO4EcllgmQfyOWPyeuFS1
+#    url: jdbc:postgresql://dpg-cml5bl2cn0vc739natag-a.singapore-postgres.render.com:5432/user_y053?currentSchema=user
+    url: jdbc:postgresql://localhost:5432/postgres?currentSchema=user
+    username: khoadt
+    password: 1
     driver-class-name: org.postgresql.Driver
   jpa:
     hibernate:

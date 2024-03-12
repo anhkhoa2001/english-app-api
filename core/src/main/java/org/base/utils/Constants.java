@@ -27,6 +27,18 @@ public class Constants {
 
     public static final String TEMPLE_SPLIT = "|!@#$%^&*()|";
 
+    public interface TYPE_QUESTION {
+        String CONTENT_TEXT = "content_text";
+
+        String NO_CONTENT = "no_content";
+
+        String ANS_TEXT = "ans_text";
+
+        String MULTI_CHOICE = "multi_choice";
+
+        String AUDIO = "audio";
+    }
+
     public interface SERVICE {
 
         interface  USER {

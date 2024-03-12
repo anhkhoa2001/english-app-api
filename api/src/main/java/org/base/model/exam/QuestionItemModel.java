@@ -26,6 +26,12 @@ public class QuestionItemModel {
     @Column(name = "CONTENT")
     private String content;
 
+    @Column(name = "SOLUTION")
+    private String solution;
+
+    @Column(name = "TYPE")
+    private String type;
+
     @OneToMany(mappedBy = "questionItemModel", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<AnswerAttributeModel> answers;
 

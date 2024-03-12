@@ -15,7 +15,10 @@ public class ExamPartModel {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "PART_ID")
+    @Column(name = "ID")
+    private Integer id;
+
+    @Column(name = "PART_ID1")
     private Integer partId;
 
     @ManyToOne

@@ -19,7 +19,7 @@ public class QuestionModel {
     private Integer questionId;
 
     @Column(name = "TYPE")
-    private Integer type;
+    private String type;
 
     @Column(name = "content")
     private String content;
@@ -31,8 +31,4 @@ public class QuestionModel {
 
     @OneToMany(mappedBy = "questionModel", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<QuestionItemModel> questionChilds;
-
-
-
-
 }
