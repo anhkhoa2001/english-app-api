@@ -14,8 +14,9 @@ import java.util.List;
 public class QuestionItemModel {
 
     @Id
-    @Column(name = "answer_id")
-    private Integer answer_id;
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    @Column(name = "item_id")
+    private Integer item_id;
 
     @Column(name = "HINT")
     private String hint;

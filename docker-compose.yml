@@ -91,8 +91,7 @@ services:
       - database:/var/bin/mysql
   postgresql:
     image: "postgres:13.1"
-    networks:
-      - kong-net
+    restart: always
     environment:
       POSTGRES_USER: khoadt
       POSTGRES_PASSWORD: 1
@@ -109,6 +108,7 @@ services:
       - '6379:6379'
   elastic:
     image: docker.elastic.co/elasticsearch/elasticsearch:7.10.0
+    restart: always
     ports:
       - "9200:9200"
       - "9300:9300"

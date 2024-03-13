@@ -14,11 +14,11 @@ import java.util.List;
 public class ExamPartModel {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "ID")
     private Integer id;
 
-    @Column(name = "PART_ID1")
+    @Column(name = "PART_ID")
     private Integer partId;
 
     @ManyToOne

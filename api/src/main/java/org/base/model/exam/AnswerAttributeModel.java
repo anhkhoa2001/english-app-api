@@ -13,6 +13,7 @@ import javax.persistence.*;
 public class AnswerAttributeModel {
 
     @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
     private Integer id;
 
     @Column(name = "key")
@@ -22,7 +23,7 @@ public class AnswerAttributeModel {
     private String value;
 
     @ManyToOne
-    @JoinColumn(name = "answer_id")
+    @JoinColumn(name = "item_id")
     @JsonIgnore
     private QuestionItemModel questionItemModel;
 }

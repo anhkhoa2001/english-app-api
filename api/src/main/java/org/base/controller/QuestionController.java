@@ -3,13 +3,12 @@ package org.base.controller;
 import lombok.extern.slf4j.Slf4j;
 import org.base.config.EnableWrapResponse;
 import org.base.dto.exam.QuestionDTO;
+import org.base.exception.SystemException;
+import org.base.model.exam.QuestionModel;
 import org.base.services.QuestionService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RequestMapping("/question")
 @RestController
@@ -22,6 +21,17 @@ public class QuestionController {
 
     @PostMapping("/create")
     public ResponseEntity create(@RequestBody QuestionDTO request) {
-        return ResponseEntity.ok(questionService.create(request));
+        try {
+            QuestionModel questionModel = questionService.create(request);
+            return ResponseEntity.ok(questionModel);
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new SystemException(e.getMessage());
+        }
+    }
+
+    @GetMapping("/get-all")
+    public ResponseEntity getAll() {
+        return ResponseEntity.ok(questionService.getAll());
     }
 }
