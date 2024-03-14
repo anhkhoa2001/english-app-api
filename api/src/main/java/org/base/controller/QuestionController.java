@@ -30,6 +30,17 @@ public class QuestionController {
         }
     }
 
+    @GetMapping("/delete")
+    public ResponseEntity deleteQuestion(@RequestParam Integer questionId) {
+        try {
+            questionService.deleteQuestion(questionId);
+            return ResponseEntity.ok("DONE!!");
+        } catch (Exception e) {
+            log.error("delete question failed {} {}", e.getClass(), e.getMessage());
+            throw new SystemException(e.getMessage());
+        }
+    }
+
     @GetMapping("/get-all")
     public ResponseEntity getAll() {
         return ResponseEntity.ok(questionService.getAll());

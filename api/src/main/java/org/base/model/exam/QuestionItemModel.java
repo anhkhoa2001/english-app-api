@@ -3,9 +3,11 @@ package org.base.model.exam;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Getter;
 import lombok.Setter;
+import org.springframework.data.annotation.Persistent;
 
 import javax.persistence.*;
 import java.util.List;
+import java.util.Set;
 
 @Entity
 @Table(name = "u_question_item")
@@ -34,7 +36,7 @@ public class QuestionItemModel {
     private String type;
 
     @OneToMany(mappedBy = "questionItemModel", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private List<AnswerAttributeModel> answers;
+    private List<AnswerAttributeModel> answer;
 
     @ManyToOne
     @JoinColumn(name = "question_id")

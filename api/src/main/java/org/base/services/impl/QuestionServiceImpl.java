@@ -77,7 +77,7 @@ public class QuestionServiceImpl implements QuestionService {
                 questionItem.setContent(q.getContent());
             }
             questionItem.setSolution(q.getSolution());
-            questionItem.setType(String.join(", ", q.getType()));
+            questionItem.setType(q.getType());
             questionItem.setQuestionModel(finalQuestionModel);
 
             questionItem = questionItemRepository.save(questionItem);
@@ -92,7 +92,7 @@ public class QuestionServiceImpl implements QuestionService {
                     ansModel = answerAttributeRepository.save(ansModel);
                     return ansModel;
                 }).collect(Collectors.toList());
-                questionItem.setAnswers(attributes);
+                questionItem.setAnswer(attributes);
             }
 
             return questionItem;
@@ -105,5 +105,11 @@ public class QuestionServiceImpl implements QuestionService {
     @Override
     public List<QuestionModel> getAll() {
         return questionRepository.findAll(Sort.by(Sort.Direction.ASC, "questionId"));
+    }
+
+    @Override
+    @Transactional
+    public void deleteQuestion(Integer questionId) {
+
     }
 }

@@ -11,6 +11,7 @@ import org.base.utils.StringUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Date;
 import java.util.Optional;
@@ -128,5 +129,11 @@ public class ExamServiceImpl implements ExamService {
             log.error("{} | {}", e.getClass(), e.getMessage());
             throw new SystemException(e.getMessage());
         }
+    }
+
+    @Override
+    @Transactional
+    public ExamModel deletePart(String examCode, int partId) {
+        return null;
     }
 }

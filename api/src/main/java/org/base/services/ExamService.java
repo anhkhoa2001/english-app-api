@@ -14,4 +14,6 @@ public interface ExamService {
     ExamModel update(ExamDTO request);
 
     void delete(String examCode);
+
+    ExamModel deletePart(String examCode, int partId);
 }

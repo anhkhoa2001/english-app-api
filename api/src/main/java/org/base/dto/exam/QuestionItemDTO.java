@@ -16,7 +16,7 @@ public class QuestionItemDTO {
 
     private int index;
     private String content;
-    private Set<String> type;
+    private String type;
     private String solution;
     private List<AnswerDTO> answer;
     private String hint;

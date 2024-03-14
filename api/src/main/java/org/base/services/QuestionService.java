@@ -11,4 +11,6 @@ public interface QuestionService {
     QuestionModel create(QuestionDTO request);
 
     List<QuestionModel> getAll();
+
+    void deleteQuestion(Integer questionId);
 }
