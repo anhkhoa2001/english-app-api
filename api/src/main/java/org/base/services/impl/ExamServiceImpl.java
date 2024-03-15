@@ -5,6 +5,8 @@ import org.base.dto.exam.ExamDTO;
 import org.base.exception.SystemException;
 import org.base.exception.ValidationException;
 import org.base.model.exam.ExamModel;
+import org.base.model.exam.ExamPartModel;
+import org.base.repositories.ExamPartRepository;
 import org.base.repositories.ExamRepository;
 import org.base.services.ExamService;
 import org.base.utils.StringUtil;
@@ -23,6 +25,9 @@ public class ExamServiceImpl implements ExamService {
     @Autowired
     private ExamRepository examRepository;
 
+    @Autowired
+    private ExamPartRepository examPartRepository;
+
     @Override
     public ExamModel create(ExamDTO request) {
         try {
@@ -40,6 +45,7 @@ public class ExamServiceImpl implements ExamService {
             examModel.setDescription(request.getDescription());
             examModel.setType(request.getType());
             examModel.setCreateAt(new Date());
+            examModel.setStatus(request.isStatus());
             if(!StringUtil.isListEmpty(request.getThumbnail())) {
                 String image = (String) request.getThumbnail().get(0).getResponse()
                         .getOrDefault("default", null);
@@ -92,6 +98,7 @@ public class ExamServiceImpl implements ExamService {
             examModel.setDescription(request.getDescription());
             examModel.setType(request.getType());
             examModel.setCreateAt(new Date());
+            examModel.setStatus(request.isStatus());
             if(!StringUtil.isListEmpty(request.getThumbnail())) {
                 String image = (String) request.getThumbnail().get(0).getResponse()
                         .getOrDefault("default", null);
@@ -133,7 +140,14 @@ public class ExamServiceImpl implements ExamService {
 
     @Override
     @Transactional
-    public ExamModel deletePart(String examCode, int partId) {
-        return null;
+    public void deletePart(String examCode, int partId) {
+        Optional<ExamModel> opExam = examRepository.findById(examCode);
+
+        if(opExam.isEmpty()) {
+            throw new ValidationException("exam code is not exist!!!");
+        }
+
+        ExamPartModel examPartModel = examPartRepository.getByPartIdAndExamModel(partId, opExam.get());
+        examPartRepository.delete(examPartModel);
     }
 }

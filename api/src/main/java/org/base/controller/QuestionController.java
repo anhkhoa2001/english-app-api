@@ -30,6 +30,17 @@ public class QuestionController {
         }
     }
 
+    @PostMapping("/update")
+    public ResponseEntity update(@RequestBody QuestionDTO request) {
+        try {
+            QuestionModel questionModel = questionService.update(request);
+            return ResponseEntity.ok(questionModel);
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new SystemException(e.getMessage());
+        }
+    }
+
     @GetMapping("/delete")
     public ResponseEntity deleteQuestion(@RequestParam Integer questionId) {
         try {

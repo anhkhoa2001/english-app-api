@@ -15,5 +15,5 @@ public interface ExamService {
 
     void delete(String examCode);
 
-    ExamModel deletePart(String examCode, int partId);
+    void deletePart(String examCode, int partId);
 }

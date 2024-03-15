@@ -12,6 +12,7 @@ import java.util.List;
 @AllArgsConstructor
 @Builder
 public class QuestionDTO {
+    private Integer questionId;
     private String examCode;
     private int part;
     private String content;

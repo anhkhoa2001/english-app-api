@@ -10,6 +10,8 @@ public interface QuestionService {
 
     QuestionModel create(QuestionDTO request);
 
+    QuestionModel update(QuestionDTO request);
+
     List<QuestionModel> getAll();
 
     void deleteQuestion(Integer questionId);
