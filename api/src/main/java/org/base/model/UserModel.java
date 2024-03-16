@@ -35,4 +35,5 @@ public class UserModel {
 
     @Column(name = "ROLE_CODE")
     private String roleCode;
+
 }

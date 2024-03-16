@@ -12,4 +12,5 @@ public class FileDTO {
     private long size;
     private String uid;
     private String type;
+    private long duration;
 }

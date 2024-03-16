@@ -10,9 +10,13 @@ public interface CourseService {
 
     CourseModel create(CourseItemDTO item);
 
-    List<CourseModel> getAll(CourseRequest request);
+    List<CourseModel> getAll();
 
     CourseModel update(CourseItemDTO item);
 
     CourseModel getByCode(String code);
+
+    Object getCoursesPublic(CourseRequest request, String token);
+
+    void joinCourse(String courseCode, String token);
 }

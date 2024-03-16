@@ -12,9 +12,11 @@ import org.base.exception.UnauthorizationException;
 import org.base.exception.ValidationException;
 import org.base.integrate.RestApiCommunication;
 import org.base.model.IndexModel;
+import org.base.model.UserModel;
 import org.base.model.cache.IndexCache;
 import org.base.model.cache.TokenCache;
 import org.base.repositories.IndexRepository;
+import org.base.repositories.UserRepository;
 import org.base.repositories.cache.IndexCacheRepository;
 import org.base.repositories.cache.TokenCacheRepository;
 import org.base.services.AccessService;
@@ -56,9 +58,6 @@ public class AccessServiceImpl implements AccessService {
     private TokenCacheRepository tokenCacheRepo;
 
     @Autowired
-    private RestApiCommunication<MessageResponseDTO> restApiCommunication;
-
-    @Autowired
     private JwtTokenSetup jwtTokenSetup;
 
     @Autowired
@@ -66,6 +65,9 @@ public class AccessServiceImpl implements AccessService {
 
     @Autowired
     private IndexCacheRepository indexCacheRepository;
+
+    @Autowired
+    private UserRepository userRepository;
 
     @PersistenceContext
     private EntityManager entityManager;
@@ -90,8 +92,15 @@ public class AccessServiceImpl implements AccessService {
             if(op.isEmpty()) {
                 throw new UnauthorizationException();
             }
+
+            UserModel userModel = userRepository.getByUsernameAndType(username, type);
+
+            if(userModel == null) {
+                throw new UnauthorizationException();
+            }
+
             TokenCache tokenCache = op.get();
-            String token = jwtTokenSetup.generateToken(code, username);
+            String token = jwtTokenSetup.generateToken(code, userModel.getUserId());
             Long currentTime = new Date().getTime();
             tokenCache.setToken(token);
             tokenCache.setCreateTime(currentTime);
@@ -100,9 +109,9 @@ public class AccessServiceImpl implements AccessService {
             tokenCacheRepo.save(tokenCache);
             return token;
         } catch (Exception e) {
-            ExceptionUtils.printException(e, request.getRequestURI(), bodyParam);
+            //ExceptionUtils.printException(e, request.getRequestURI(), bodyParam);
 
-            throw new SystemException("Server failed");
+            throw new UnauthorizationException();
         }
     }
 
@@ -211,26 +220,28 @@ public class AccessServiceImpl implements AccessService {
 
             tokenCacheRepo.save(tokenCache);
 
-            //save user if user not exist
-            UserDTO userDTO = new UserDTO();
-            userDTO.setUsername(username);
-            userDTO.setType(type);
-            userDTO.setFullname(oAuth2User.getAttribute("name"));
-            if(type.equals(Constants.TYPE_LOGIN.GOOGLE)) {
-                userDTO.setEmail(username);
-                userDTO.setAvatar(oAuth2User.getAttribute("picture"));
-            } else if(type.equals(Constants.TYPE_LOGIN.GITHUB)) {
-                userDTO.setAvatar(oAuth2User.getAttribute("avatar_url"));
-            } else {
-                userDTO.setEmail(username);
+            UserModel userModel = userRepository.getByUsernameAndType(username, type);
+
+            if(userModel == null) {
+                userModel = new UserModel();
+                userModel.setUserId(UUID.randomUUID().toString());
+                userModel.setCreateAt(new Date());
+                userModel.setRoleCode(Constants.ROLE_CODE.STUDENT);
+                userModel.setUsername(username);
+                userModel.setType(type);
+                userModel.setFullname(oAuth2User.getAttribute("name"));
+                if(type.equals(Constants.TYPE_LOGIN.GOOGLE)) {
+                    userModel.setEmail(username);
+                    userModel.setAvatar(oAuth2User.getAttribute("picture"));
+                } else if(type.equals(Constants.TYPE_LOGIN.GITHUB)) {
+                    userModel.setAvatar(oAuth2User.getAttribute("avatar_url"));
+                } else {
+                    userModel.setEmail(username);
+                }
+
+                userRepository.save(userModel);
             }
 
-            String body = new ObjectMapper().writeValueAsString(userDTO);
-            ResponseEntity<MessageResponseDTO> res = restApiCommunication.exchangeJsonUrl(HttpMethod.POST,
-                                    new HttpHeaders(), urlCreateUser, body, MessageResponseDTO.class);
-
-            log.info("{}", res.getStatusCode());
-            log.info("{}", userDTO);
             return hostFE + ":" + portFE + "?code=" + code + "&username=" + username + "&type=" + type;
         } catch (Exception e) {
             throw new SystemException("Server failed");

@@ -7,7 +7,9 @@ import io.jsonwebtoken.*;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import org.base.model.cache.TokenCache;
+import org.base.repositories.UserRepository;
 import org.base.repositories.cache.TokenCacheRepository;
+import org.base.utils.Constants;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.oauth2.jwt.Jwt;
@@ -30,24 +32,38 @@ public class JwtTokenSetup {
     @Autowired
     private TokenCacheRepository tokenCacheRepo;
 
+    @Autowired
+    private UserRepository userRepository;
+
     public JwtTokenSetup() {}
 
-    public String generateToken(String code, String username) {
+    public String generateToken(String code, String userId) {
         Date now = new Date();
 
         return Jwts.builder()
                 .setSubject(code)
-                .claim("username", username)
+                .claim("userId", userId)
                 .setIssuedAt(now)
+                .setExpiration(new Date(now.getTime() + TIMER))
                 .signWith(SignatureAlgorithm.HS512, SECRET_KEY)
                 .compact();
     }
 
     public Claims getClaimsFromToken(String token) {
+        token = token.replaceAll(Constants.TOKEN_TYPE, "");
         return Jwts.parser()
                 .setSigningKey(SECRET_KEY)
                 .parseClaimsJws(token)
                 .getBody();
+    }
+
+    public String getUserIdFromToken(String token) {
+        token = token.replaceAll(Constants.TOKEN_TYPE, "");
+        String userId = Jwts.parser()
+                .setSigningKey(SECRET_KEY)
+                .parseClaimsJws(token)
+                .getBody().get("userId").toString();
+        return userRepository.findById(userId).isEmpty() ? null : userId;
     }
 
     public String getCodeFromToken(String token) {

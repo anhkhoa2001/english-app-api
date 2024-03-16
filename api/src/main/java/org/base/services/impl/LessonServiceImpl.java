@@ -5,8 +5,10 @@ import org.base.dao.FileDao;
 import org.base.dto.lesson.LessonDTO;
 import org.base.exception.AppException;
 import org.base.exception.SystemException;
+import org.base.model.course.CourseModel;
 import org.base.model.course.LessonModel;
 import org.base.model.course.SectionModel;
+import org.base.repositories.CourseRepository;
 import org.base.repositories.LessonRepository;
 import org.base.repositories.SectionRepository;
 import org.base.services.LessonService;
@@ -30,6 +32,9 @@ public class LessonServiceImpl implements LessonService {
     private SectionRepository sectionRepository;
 
     @Autowired
+    private CourseRepository courseRepository;
+
+    @Autowired
     private FileDao fileDao;
 
     @Override
@@ -39,6 +44,12 @@ public class LessonServiceImpl implements LessonService {
             LessonModel lessonExist = lessonRepository.getByLessionNameAndSectionR(dto.getLessonName(), dto.getSection_id());
             if(opSec.isEmpty()) {
                 throw new SystemException("section code not exist!!!");
+            }
+
+            Optional<CourseModel> opCourse = courseRepository.findById(opSec.get().getCourseModel().getCode());
+
+            if(opCourse.isEmpty()) {
+                throw new SystemException("course code not exist!!!");
             }
 
             if(lessonExist != null) {
@@ -55,13 +66,17 @@ public class LessonServiceImpl implements LessonService {
             lessonModel.setSectionModel(opSec.get());
 
             lessonModel = lessonRepository.save(lessonModel);
+            CourseModel courseModel = opCourse.get();
+            courseModel.setLectures(courseModel.getLectures() + 1);
+
+            courseRepository.save(courseModel);
             log.info(lessonModel.toString());
             return lessonModel;
         } catch (Exception e) {
             log.error("Occur error when create lesson!!!");
             log.error("{} | {}", e.getClass(), e.getMessage());
             e.printStackTrace();
-            throw new AppException("create section failed!!!");
+            throw new SystemException("create section failed!!!");
         }
     }
 

@@ -1,18 +1,23 @@
 package org.base.services.impl;
 
 import lombok.extern.slf4j.Slf4j;
+import org.base.config.JwtTokenSetup;
 import org.base.dto.course.CourseItemDTO;
 import org.base.dto.course.CourseRequest;
 import org.base.exception.SystemException;
 import org.base.exception.ValidationException;
+import org.base.model.UserModel;
 import org.base.model.course.CourseModel;
 import org.base.model.course.LessonModel;
+import org.base.model.course.StudentOfCourseModel;
 import org.base.repositories.CourseRepository;
+import org.base.repositories.StudentOfCourseRepository;
 import org.base.services.CourseService;
 import org.base.utils.StringUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.*;
 
@@ -22,6 +27,12 @@ public class CourseServiceImpl implements CourseService {
 
     @Autowired
     private CourseRepository courseRepository;
+
+    @Autowired
+    private JwtTokenSetup jwtTokenSetup;
+
+    @Autowired
+    private StudentOfCourseRepository studentOfCourseRepository;
 
     @Override
     public CourseModel create(CourseItemDTO item) {
@@ -63,7 +74,7 @@ public class CourseServiceImpl implements CourseService {
     }
 
     @Override
-    public List<CourseModel> getAll(CourseRequest request) {
+    public List<CourseModel> getAll() {
         return courseRepository.findAll(Sort.by(Sort.Direction.DESC, "createAt"));
     }
 
@@ -125,5 +136,36 @@ public class CourseServiceImpl implements CourseService {
         } catch (Exception e) {
         }
         return null;
+    }
+
+    @Override
+    public Object getCoursesPublic(CourseRequest request, String token) {
+        //request.setOwner(jwtTokenSetup.getUserIdFromToken(token));
+        return courseRepository.getAll(request);
+    }
+
+    @Override
+    @Transactional
+    public void joinCourse(String courseCode, String token) {
+        String userId = jwtTokenSetup.getUserIdFromToken(token);
+        if(userId == null) {
+            throw new ValidationException("user not found!!!");
+        }
+
+        CourseModel courseModel = courseRepository.getByCourseCode(courseCode);
+        if(courseModel == null) {
+            throw new ValidationException("course code not found!!");
+        }
+
+        StudentOfCourseModel soc = studentOfCourseRepository.getByCourseCodeAndUserId(courseCode, userId);
+        if(soc == null) {
+            soc = new StudentOfCourseModel();
+            soc.setCourseCode(courseCode);
+            soc.setUserId(userId);
+            soc.setJoinAt(new Date());
+            courseModel.setTotal_student(courseModel.getTotal_student() + 1);
+        }
+
+        studentOfCourseRepository.save(soc);
     }
 }

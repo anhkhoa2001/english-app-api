@@ -29,31 +29,30 @@ public class FilterChainFirst extends OncePerRequestFilter {
     }
 
     private boolean validateHeader(HttpServletRequest request, HttpServletResponse response, String token) throws IOException {
-        if(containsPattern(request.getRequestURI(), "/public")) {
+        if(containsPattern(request.getRequestURI())) {
             return true;
         }
 
-        return true;
 
-//        try {
-//            token = token.replace(Constants.TOKEN_TYPE, "");
-//            boolean isno = jwtTokenSetup.validateToken(token);
-//
-//            if(isno) {
-//                return true;
-//            }
-//
-//            throw new Exception();
-//        } catch (Exception e) {
-//            log.error("Tracking {} {}", e.getClass(), e.getMessage());
-//            log.error("URL {}", request.getRequestURI());
-//            response.sendError(HttpServletResponse.SC_OK, "Token invalid or expired");
-//
-//            return false;
-//        }
+        try {
+            token = token.replace(Constants.TOKEN_TYPE, "");
+            boolean isno = jwtTokenSetup.validateToken(token);
+
+            if(isno) {
+                return true;
+            }
+
+            throw new Exception();
+        } catch (Exception e) {
+            log.error("Tracking {} {}", e.getClass(), e.getMessage());
+            log.error("URL {}", request.getRequestURI());
+            response.sendError(HttpServletResponse.SC_OK, "Token invalid or expired");
+
+            return false;
+        }
     }
 
-    private boolean containsPattern(String pattern1, String pattern2) {
-        return pattern1.startsWith(pattern2);
+    private boolean containsPattern(String pattern1) {
+        return pattern1.startsWith("/api/public") || pattern1.startsWith("/api/up-file");
     }
 }

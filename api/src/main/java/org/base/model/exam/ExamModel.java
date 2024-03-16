@@ -44,6 +44,9 @@ public class ExamModel {
     @Column(name = "CREATE_AT")
     private Date createAt;
 
+    @Column(name = "ATTENDENCES", nullable = false)
+    private int attendences;
+
     @OneToMany(mappedBy = "examModel", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<ExamPartModel> parts;
 }

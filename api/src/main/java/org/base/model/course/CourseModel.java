@@ -1,8 +1,10 @@
 package org.base.model.course;
 
 import lombok.*;
+import org.base.model.UserModel;
 
 import javax.persistence.*;
+import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
 
@@ -10,7 +12,7 @@ import java.util.List;
 @Table(name = "U_COURSE")
 @Getter
 @Setter
-public class CourseModel {
+public class CourseModel implements Serializable {
 
     @Id
     private String code;
@@ -47,6 +49,12 @@ public class CourseModel {
 
     @Column(name = "RATE")
     private double rate;
+
+    @Column(name = "LECTURES")
+    private int lectures;
+
+    @Column(name = "total_student")
+    private int total_student;
 
     @OneToMany(mappedBy = "courseModel", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private List<SectionModel> sections;

@@ -27,10 +27,9 @@ import java.util.Map;
 
 @RestController
 @Slf4j
-@RequestMapping("/api")
 public class GatewayController {
 
-    @Autowired
+    /*@Autowired
     private RestApiCommunication restApiCommunication;
 
     @Value("${kong.gateway.port}")
@@ -98,5 +97,5 @@ public class GatewayController {
             log.error("Build json body string error {}", bodyParamMap);
             throw new SystemException("Build json body string error");
         }
-    }
+    }*/
 }

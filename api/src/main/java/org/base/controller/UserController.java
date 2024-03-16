@@ -26,7 +26,7 @@ public class UserController {
     }
 
     @GetMapping("/user-info")
-    public ResponseEntity userInfo(@RequestParam String username) {
-        return ResponseEntity.ok(userService.getUserInfo(username));
+    public ResponseEntity userInfo(@RequestHeader(name = "Authorization") String token) {
+        return ResponseEntity.ok(userService.getUserInfo(token));
     }
 }

@@ -25,9 +25,14 @@ public class CourseDaoImpl implements CourseDao {
         MapSqlParameterSource source = new MapSqlParameterSource();
         StringBuilder sb = new StringBuilder();
 
-        sb.append(" SELECT * FROM U_COURSE ");
+        sb.append(" SELECT * FROM U_COURSE WHERE 1 = 1 ");
 
-        sb.append(" LIMIT :pageSize OFFSET :page ");
+        if(StringUtil.isObject(request.getIsPublic())) {
+            sb.append(" AND is_public = :isPublic ");
+            source.addValue("isPublic", request.getIsPublic());
+        }
+
+        sb.append(" ORDER BY CREATE_AT DESC LIMIT :pageSize OFFSET :page ");
         source.addValue("pageSize", request.getPageSize());
         source.addValue("page", (request.getPage() - 1)*request.getPageSize());
 
@@ -41,6 +46,7 @@ public class CourseDaoImpl implements CourseDao {
             item.setLevel(StringUtil.nvl(m.get("level"), ""));
             item.setSummary(StringUtil.nvl(m.get("summary"), ""));
             item.setThumbnail(StringUtil.nvl(m.get("thumbnail"), ""));
+            item.setLectures(Integer.parseInt(StringUtil.nvl(m.get("lectures"), "0")));
             item.setStatus((boolean) m.get("status"));
             item.setPublic((boolean) m.get("is_public"));
             item.setCreateBy(StringUtil.nvl(m.get("create_by"), "admin"));
@@ -54,7 +60,12 @@ public class CourseDaoImpl implements CourseDao {
         sb = new StringBuilder();
         source = new MapSqlParameterSource();
 
-        sb.append(" SELECT COUNT(*) FROM U_COURSE ");
+        sb.append(" SELECT COUNT(*) FROM U_COURSE WHERE 1 = 1 ");
+
+        if(StringUtil.isObject(request.getIsPublic())) {
+            sb.append(" AND is_public = :isPublic ");
+            source.addValue("isPublic", request.getIsPublic());
+        }
 
         Integer count = namedParameterJdbcTemplate.queryForObject(sb.toString(), source, Integer.class);
         map.put("totalRecord", count);

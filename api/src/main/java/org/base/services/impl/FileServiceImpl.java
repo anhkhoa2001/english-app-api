@@ -6,6 +6,7 @@ import com.amazonaws.SdkClientException;
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.model.*;
 import lombok.extern.slf4j.Slf4j;
+import org.base.dao.FileDao;
 import org.base.exception.AppException;
 import org.base.services.FileService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,6 +33,9 @@ public class FileServiceImpl implements FileService {
     @Value("${spring.amazon.s3.url}")
     private String url;
 
+    @Autowired
+    private FileDao fileDao;
+
     @Override
     @Transactional
     public Map<String, URL> saveFileToCloud(String filename, InputStream content, long size, String username) {
@@ -39,19 +43,19 @@ public class FileServiceImpl implements FileService {
             username = "admin";
         }
         Map<String, URL> map = new HashMap<>();
-        String fileName = createPath(username, filename);
+        String fileName = fileDao.createPath(username, filename);
         try {
             S3Object s3Object = s3Client.getObject(s3BucketName, fileName);
             if(s3Object != null) {
                 filename = "duplicate-" + UUID.randomUUID() + "-" + filename;
-                fileName = createPath(username, filename);
+                fileName = fileDao.createPath(username, filename);
             }
         } catch (AmazonServiceException e) {
             log.error("Get file on s3 {}", e.getErrorMessage());
         }
 
         try {
-            Bucket bucket = createBucket(s3BucketName);
+            Bucket bucket = fileDao.createBucket(s3BucketName);
             InputStream inputStream = content;
 
             log.info("Uploading file with name {}", fileName);
@@ -110,42 +114,6 @@ public class FileServiceImpl implements FileService {
         }*//*
     }*/
 
-    public S3Object getFileByFilename(String filename) {
-        try {
-            return s3Client.getObject(s3BucketName, filename);
-        } catch (AmazonServiceException e) {
-            log.error("Get file on s3 {}", e.getErrorMessage());
-        }
-        return null;
-    }
-
-    public URL getPresignURL(String filename) {
-        try {
-            // Set the presigned URL to expire after one hour.
-            java.util.Date expiration = new java.util.Date();
-            long expTimeMillis = Instant.now().toEpochMilli();
-            expTimeMillis += 1000;
-            expiration.setTime(expTimeMillis);
-
-            // Generate the presigned URL.
-            System.out.println("Generating pre-signed URL.");
-            GeneratePresignedUrlRequest generatePresignedUrlRequest = new GeneratePresignedUrlRequest(s3BucketName,
-                    filename)
-                    .withMethod(HttpMethod.GET);
-            URL url = s3Client.generatePresignedUrl(generatePresignedUrlRequest);
-
-            System.out.println("Pre-Signed URL: " + url.toString());
-            return url;
-        } catch (AmazonServiceException e) {
-            log.error("error {}", e.getErrorMessage());
-        } catch (SdkClientException e) {
-            log.error("error {}", e.getMessage());
-        }
-
-
-        return null;
-    }
-
     @Override
     public void deleteObjectS3(String filename, String username) {
         try {
@@ -171,41 +139,5 @@ public class FileServiceImpl implements FileService {
         } catch (Exception e) {
             throw new AppException(e.getMessage());
         }
-    }
-
-    private String createPath(String username, String filename) {
-        return username + "/" + LocalDate.now().getYear() + "/" + LocalDate.now().getMonthValue() +
-                "/" + LocalDate.now().getDayOfMonth() + "/" + filename;
-    }
-
-
-    public Bucket createBucket(String bucketName) {
-        Bucket b = null;
-        if (s3Client.doesBucketExistV2(bucketName)) {
-            log.warn("Bucket {} already exists......", bucketName);
-            b = getBucket(bucketName);
-        } else {
-            try {
-                b = s3Client.createBucket(bucketName);
-                s3Client.setBucketAcl(bucketName, CannedAccessControlList.PublicReadWrite);
-            } catch (AmazonS3Exception e) {
-                log.error("Error {} occurred while create bucket", e.getErrorMessage());
-                throw new AppException(e.getErrorMessage());
-            }
-        }
-
-        return b;
-    }
-
-    public Bucket getBucket(String bucketName) {
-        Bucket bucket = null;
-        List<Bucket> buckets = s3Client.listBuckets();
-        for (Bucket b : buckets) {
-            if (b.getName().equals(bucketName)) {
-                bucket = b;
-                break;
-            }
-        }
-        return bucket;
     }
 }

@@ -1,5 +1,7 @@
 package org.base.services.impl;
 
+import io.jsonwebtoken.Claims;
+import org.base.config.JwtTokenSetup;
 import org.base.dto.UserDTO;
 import org.base.model.UserModel;
 import org.base.repositories.UserRepository;
@@ -12,6 +14,7 @@ import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Date;
+import java.util.Optional;
 import java.util.UUID;
 
 @Service
@@ -19,6 +22,9 @@ public class UserServiceImpl implements UserService {
 
     @Autowired
     private TokenCacheRepository  tokenCacheRepo;
+
+    @Autowired
+    private JwtTokenSetup jwtTokenSetup;
 
     @Autowired
     private UserRepository userRepo;
@@ -51,7 +57,11 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public UserModel getUserInfo(String username) {
-        return userRepo.getByUsername(username);
+    public UserModel getUserInfo(String token) {
+        Claims claims = jwtTokenSetup.getClaimsFromToken(token);
+        String userId = claims.get("userId").toString();
+
+        Optional<UserModel> opUser = userRepo.findById(userId);
+        return opUser.orElse(null);
     }
 }

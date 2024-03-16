@@ -34,7 +34,6 @@ public class ExamController {
         return ResponseEntity.ok(examService.getByCode(code));
     }
 
-
     @PostMapping("/update")
     public ResponseEntity update(@RequestBody ExamDTO request) {
         return ResponseEntity.ok(examService.update(request));

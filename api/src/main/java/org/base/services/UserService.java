@@ -9,5 +9,5 @@ public interface UserService {
 
     Object getAllUser();
 
-    UserModel getUserInfo(String username);
+    UserModel getUserInfo(String token);
 }
