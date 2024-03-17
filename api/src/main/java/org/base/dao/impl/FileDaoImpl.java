@@ -4,7 +4,6 @@ import com.amazonaws.AmazonServiceException;
 import com.amazonaws.HttpMethod;
 import com.amazonaws.SdkClientException;
 import com.amazonaws.services.s3.AmazonS3;
-import com.amazonaws.services.s3.AmazonS3ClientBuilder;
 import com.amazonaws.services.s3.model.*;
 import lombok.extern.slf4j.Slf4j;
 import org.base.dao.FileDao;
@@ -16,13 +15,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
-import java.io.*;
 import java.net.URL;
 import java.time.Instant;
 import java.time.LocalDate;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.UUID;
 
 @Component
 @Slf4j
@@ -126,6 +122,7 @@ public class FileDaoImpl implements FileDao {
 
         return null;
     }
+
     /*public void checkTypeFile(S3Object s3Object) {
         List<String> imageFiles = new ArrayList<>();
         List<String> videoFiles = new ArrayList<>();

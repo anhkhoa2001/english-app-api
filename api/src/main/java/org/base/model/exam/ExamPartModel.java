@@ -3,6 +3,7 @@ package org.base.model.exam;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Getter;
 import lombok.Setter;
+import org.base.model.course.LessonModel;
 
 import javax.persistence.*;
 import java.util.List;
@@ -31,4 +32,8 @@ public class ExamPartModel {
 
     @Column(name = "TYPE")
     private Integer type;
+
+    @OneToOne(mappedBy = "examModel")
+    @JsonIgnore
+    private LessonModel lessonModel;
 }

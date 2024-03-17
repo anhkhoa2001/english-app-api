@@ -1,7 +1,6 @@
 package org.base.model.course;
 
 import lombok.*;
-import org.base.model.UserModel;
 
 import javax.persistence.*;
 import java.io.Serializable;
@@ -54,7 +53,7 @@ public class CourseModel implements Serializable {
     private int lectures;
 
     @Column(name = "total_student")
-    private int total_student;
+    private int totalStudent;
 
     @OneToMany(mappedBy = "courseModel", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private List<SectionModel> sections;

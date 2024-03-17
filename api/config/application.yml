@@ -24,7 +24,7 @@ kong:
 #thoi gian cua token la 3h
 secret:
   key: MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQDjrOOSzmnZkvqyTMj79MWRr15Q4fSdottj53i3WgUONNsglt5zdH0XMCYo9YqcrWorzleuuVn1XFoX+ujZolY9dRPz93JeCLJSnHzOAS+/UFO1iCu4kTAdQW32ME2vbmqhf4MYlVcDRdd8V/dOODHzd0bHjqMGR5Hglbf9v8oZQIDAQAB
-  time_live: 1800000
+  time_live: 18000000
 
 spring:
   datasource:

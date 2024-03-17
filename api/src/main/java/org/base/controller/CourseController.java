@@ -22,7 +22,7 @@ public class CourseController {
 
     @PostMapping("/get-courses-public")
     public ResponseEntity getCoursesPublic(@RequestBody CourseRequest request,
-                                           @RequestHeader(name = "Authorization") String token) {
+                                           @RequestHeader(name = "Authorization", required = false) String token) {
         return ResponseEntity.ok(courseService.getCoursesPublic(request, token));
     }
 

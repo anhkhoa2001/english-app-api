@@ -8,9 +8,8 @@ import org.base.exception.SystemException;
 import org.base.model.course.CourseModel;
 import org.base.model.course.LessonModel;
 import org.base.model.course.SectionModel;
-import org.base.repositories.CourseRepository;
-import org.base.repositories.LessonRepository;
-import org.base.repositories.SectionRepository;
+import org.base.model.exam.ExamPartModel;
+import org.base.repositories.*;
 import org.base.services.LessonService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -35,13 +34,16 @@ public class LessonServiceImpl implements LessonService {
     private CourseRepository courseRepository;
 
     @Autowired
+    private ExamPartRepository examPartRepository;
+
+    @Autowired
     private FileDao fileDao;
 
     @Override
     public LessonModel create(LessonDTO dto) {
         try {
-            Optional<SectionModel> opSec = sectionRepository.findById(dto.getSection_id());
-            LessonModel lessonExist = lessonRepository.getByLessionNameAndSectionR(dto.getLessonName(), dto.getSection_id());
+            Optional<SectionModel> opSec = sectionRepository.findById(dto.getSectionId());
+            LessonModel lessonExist = lessonRepository.getByLessionNameAndSectionR(dto.getLessonName(), dto.getSectionId());
             if(opSec.isEmpty()) {
                 throw new SystemException("section code not exist!!!");
             }
@@ -57,20 +59,26 @@ public class LessonServiceImpl implements LessonService {
             }
 
             LessonModel lessonModel = new LessonModel();
-            lessonModel.setDescription(dto.getDes());
-            lessonModel.setLessionName(dto.getLessonName());
-            lessonModel.setStatus(dto.isStatus());
-            lessonModel.setThumbnail(fileDao.getUrlInFile(dto.getThumbnail()));
-            lessonModel.setUrl_video(fileDao.getUrlInFile(dto.getVideo()));
+            lessonModel.setType(dto.getType());
+            if(dto.getType().equals("minitest")) {
+                ExamPartModel examPartModel = examPartRepository.findById(dto.getExamPartId()).orElseGet(null);
+                lessonModel.setExamModel(examPartModel);
+            } else {
+                lessonModel.setDescription(dto.getDes());
+                lessonModel.setStatus(dto.isStatus());
+                lessonModel.setThumbnail(fileDao.getUrlInFile(dto.getThumbnail()));
+                lessonModel.setUrl_video(fileDao.getUrlInFile(dto.getVideo()));
+            }
             lessonModel.setCreateAt(new Date());
             lessonModel.setSectionModel(opSec.get());
+            lessonModel.setLessionName(dto.getLessonName());
 
             lessonModel = lessonRepository.save(lessonModel);
             CourseModel courseModel = opCourse.get();
             courseModel.setLectures(courseModel.getLectures() + 1);
 
             courseRepository.save(courseModel);
-            log.info(lessonModel.toString());
+
             return lessonModel;
         } catch (Exception e) {
             log.error("Occur error when create lesson!!!");
@@ -111,11 +119,11 @@ public class LessonServiceImpl implements LessonService {
     @Override
     public LessonModel update(LessonDTO dto) {
         try {
-            Optional<SectionModel> opSec = sectionRepository.findById(dto.getSection_id());
+            Optional<SectionModel> opSec = sectionRepository.findById(dto.getSectionId());
             if(opSec.isEmpty()) {
                 throw new SystemException("lesson code not exist!!!");
             }
-            LessonModel lessonModel = lessonRepository.getByLessionNameAndSectionR(dto.getLessonName(), dto.getSection_id());
+            LessonModel lessonModel = lessonRepository.getByLessionNameAndSectionR(dto.getLessonName(), dto.getSectionId());
             if(lessonModel == null) {
                 throw new SystemException("Lesson already not exist!!");
             }

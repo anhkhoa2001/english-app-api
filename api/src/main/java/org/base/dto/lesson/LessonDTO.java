@@ -10,9 +10,14 @@ public class LessonDTO {
 
     private List<FileDTO> thumbnail;
     private List<FileDTO> video;
-    private int section_id;
+    private int sectionId;
     private String sectionName;
     private String lessonName;
     private boolean status;
     private String des;
+
+    //lesson
+    //minitest
+    private String type;
+    private int examPartId;
 }

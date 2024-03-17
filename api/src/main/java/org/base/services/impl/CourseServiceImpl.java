@@ -6,7 +6,6 @@ import org.base.dto.course.CourseItemDTO;
 import org.base.dto.course.CourseRequest;
 import org.base.exception.SystemException;
 import org.base.exception.ValidationException;
-import org.base.model.UserModel;
 import org.base.model.course.CourseModel;
 import org.base.model.course.LessonModel;
 import org.base.model.course.StudentOfCourseModel;
@@ -163,7 +162,7 @@ public class CourseServiceImpl implements CourseService {
             soc.setCourseCode(courseCode);
             soc.setUserId(userId);
             soc.setJoinAt(new Date());
-            courseModel.setTotal_student(courseModel.getTotal_student() + 1);
+            courseModel.setTotalStudent(courseModel.getTotalStudent() + 1);
         }
 
         studentOfCourseRepository.save(soc);

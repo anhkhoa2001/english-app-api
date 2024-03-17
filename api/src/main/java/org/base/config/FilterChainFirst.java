@@ -2,7 +2,9 @@
 package org.base.config;
 
 import lombok.extern.slf4j.Slf4j;
+import org.base.exception.ValidationException;
 import org.base.utils.Constants;
+import org.springframework.http.HttpMethod;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import javax.servlet.FilterChain;
@@ -29,6 +31,9 @@ public class FilterChainFirst extends OncePerRequestFilter {
     }
 
     private boolean validateHeader(HttpServletRequest request, HttpServletResponse response, String token) throws IOException {
+        if(request.getMethod().equals(HttpMethod.OPTIONS.name())) {
+            return true;
+        }
         if(containsPattern(request.getRequestURI())) {
             return true;
         }
@@ -41,18 +46,28 @@ public class FilterChainFirst extends OncePerRequestFilter {
             if(isno) {
                 return true;
             }
-
             throw new Exception();
         } catch (Exception e) {
-            log.error("Tracking {} {}", e.getClass(), e.getMessage());
-            log.error("URL {}", request.getRequestURI());
-            response.sendError(HttpServletResponse.SC_OK, "Token invalid or expired");
-
+            log.error("Tracking {} {} {}", e.getClass(), e.getMessage(), request.getRequestURI());
+            //log.error("URL {}", request.getRequestURI());
+            /*if(e instanceof NullPointerException) {
+                if(request.getMethod().equals(HttpMethod.OPTIONS.name())) {
+                    checkCORS++;
+                    response.sendError(HttpServletResponse.SC_OK, "Token invalid or expired");
+                } else if(token == null && checkCORS == 1) {
+                    checkCORS = 0;
+                    response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Token invalid or expired");
+                }
+            } else {
+                response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Token invalid or expired");
+            }*/
+            response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Token invalid or expired");
             return false;
+            //return false;
         }
     }
 
     private boolean containsPattern(String pattern1) {
-        return pattern1.startsWith("/api/public") || pattern1.startsWith("/api/up-file");
+        return pattern1.contains("public");
     }
 }

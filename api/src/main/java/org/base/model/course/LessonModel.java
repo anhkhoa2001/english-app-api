@@ -2,6 +2,8 @@ package org.base.model.course;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
+import org.base.model.exam.ExamModel;
+import org.base.model.exam.ExamPartModel;
 
 import javax.persistence.*;
 import java.util.Date;
@@ -26,6 +28,13 @@ public class LessonModel {
 
     @Column(name = "URL_VIDEO")
     private String url_video;
+
+    @Column(name = "TYPE")
+    private String type;
+
+    @OneToOne(cascade = CascadeType.DETACH)
+    @JoinColumn(name = "exam_part_id", referencedColumnName = "ID")
+    private ExamPartModel examModel;
 
     @Column(name = "DESCRIPTION")
     private String description;

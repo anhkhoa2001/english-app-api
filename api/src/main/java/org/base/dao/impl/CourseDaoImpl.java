@@ -25,11 +25,21 @@ public class CourseDaoImpl implements CourseDao {
         MapSqlParameterSource source = new MapSqlParameterSource();
         StringBuilder sb = new StringBuilder();
 
-        sb.append(" SELECT * FROM U_COURSE WHERE 1 = 1 ");
+        sb.append(" SELECT * FROM U_COURSE WHERE 1 = 1 AND STATUS = true ");
 
         if(StringUtil.isObject(request.getIsPublic())) {
             sb.append(" AND is_public = :isPublic ");
             source.addValue("isPublic", request.getIsPublic());
+        }
+
+        if(request.getLevels() != null && !request.getLevels().isEmpty()) {
+            sb.append(" AND level IN (:levels) ");
+            source.addValue("levels", request.getLevels());
+        }
+
+        if(StringUtil.isObject(request.getRate())) {
+            sb.append(" AND rate <= :rate ");
+            source.addValue("rate", request.getRate());
         }
 
         sb.append(" ORDER BY CREATE_AT DESC LIMIT :pageSize OFFSET :page ");
@@ -47,6 +57,8 @@ public class CourseDaoImpl implements CourseDao {
             item.setSummary(StringUtil.nvl(m.get("summary"), ""));
             item.setThumbnail(StringUtil.nvl(m.get("thumbnail"), ""));
             item.setLectures(Integer.parseInt(StringUtil.nvl(m.get("lectures"), "0")));
+            item.setTotalStudent(Integer.parseInt(StringUtil.nvl(m.get("total_student"), "0")));
+            item.setRate(Double.parseDouble(StringUtil.nvl(m.get("rate"), "0")));
             item.setStatus((boolean) m.get("status"));
             item.setPublic((boolean) m.get("is_public"));
             item.setCreateBy(StringUtil.nvl(m.get("create_by"), "admin"));
@@ -60,11 +72,21 @@ public class CourseDaoImpl implements CourseDao {
         sb = new StringBuilder();
         source = new MapSqlParameterSource();
 
-        sb.append(" SELECT COUNT(*) FROM U_COURSE WHERE 1 = 1 ");
+        sb.append(" SELECT COUNT(*) FROM U_COURSE WHERE 1 = 1 AND STATUS = true ");
 
         if(StringUtil.isObject(request.getIsPublic())) {
             sb.append(" AND is_public = :isPublic ");
             source.addValue("isPublic", request.getIsPublic());
+        }
+
+        if(request.getLevels() != null && !request.getLevels().isEmpty()) {
+            sb.append(" AND level IN (:levels) ");
+            source.addValue("levels", request.getLevels());
+        }
+
+        if(StringUtil.isObject(request.getRate())) {
+            sb.append(" AND rate <= :rate ");
+            source.addValue("rate", request.getRate());
         }
 
         Integer count = namedParameterJdbcTemplate.queryForObject(sb.toString(), source, Integer.class);
