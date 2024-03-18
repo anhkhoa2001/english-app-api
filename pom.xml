@@ -12,6 +12,7 @@
     <module>core</module>
     <module>test</module>
     <module>api</module>
+      <module>socket</module>
   </modules>
 
 

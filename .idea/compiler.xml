@@ -4,6 +4,7 @@
     <excludeFromCompile>
       <directory url="file://$PROJECT_DIR$/core/src/main/resources/archetype-resources" includeSubdirectories="true" />
       <directory url="file://$PROJECT_DIR$/api/src/main/resources/archetype-resources" includeSubdirectories="true" />
+      <directory url="file://$PROJECT_DIR$/socket/src/main/resources/archetype-resources" includeSubdirectories="true" />
     </excludeFromCompile>
     <annotationProcessing>
       <profile name="Maven default annotation processors profile" enabled="true">
@@ -11,8 +12,9 @@
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
         <module name="core" />
-        <module name="test" />
         <module name="api" />
+        <module name="socket" />
+        <module name="test" />
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>
@@ -36,6 +38,7 @@
       <module name="dochub-service" options="-parameters" />
       <module name="exam-service" options="-parameters" />
       <module name="gateway" options="-parameters" />
+      <module name="socket" options="-parameters" />
       <module name="test" options="-parameters" />
       <module name="user-service" options="-parameters" />
     </option>

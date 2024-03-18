@@ -2,10 +2,12 @@ package org.base.services.impl;
 
 import lombok.extern.slf4j.Slf4j;
 import org.base.dto.exam.ExamDTO;
+import org.base.dto.exam.ExamRequest;
 import org.base.exception.SystemException;
 import org.base.exception.ValidationException;
 import org.base.model.exam.ExamModel;
 import org.base.model.exam.ExamPartModel;
+import org.base.model.exam.QuestionModel;
 import org.base.repositories.ExamPartRepository;
 import org.base.repositories.ExamRepository;
 import org.base.services.ExamService;
@@ -15,6 +17,8 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.Optional;
 
@@ -46,6 +50,7 @@ public class ExamServiceImpl implements ExamService {
             examModel.setType(request.getType());
             examModel.setCreateAt(new Date());
             examModel.setStatus(request.isStatus());
+            examModel.setCountdown(request.getCountdown());
             if(!StringUtil.isListEmpty(request.getThumbnail())) {
                 String image = (String) request.getThumbnail().get(0).getResponse()
                         .getOrDefault("default", null);
@@ -74,7 +79,15 @@ public class ExamServiceImpl implements ExamService {
     @Override
     public ExamModel getByCode(String code) {
         try {
-            return examRepository.findById(code).get();
+            ExamModel examModel = examRepository.findById(code).get();
+            examModel.getParts().forEach(part -> {
+                part.getQuestions().sort(new Comparator<QuestionModel>() {
+                    public int compare(QuestionModel o1, QuestionModel o2) {
+                        return Integer.compare(o1.getQuestionId(), o2.getQuestionId());
+                    }
+                });
+            });
+            return examModel;
         } catch (Exception e) {
             log.error("{} | {}", e.getClass(), e.getMessage());
 
@@ -99,6 +112,7 @@ public class ExamServiceImpl implements ExamService {
             examModel.setType(request.getType());
             examModel.setCreateAt(new Date());
             examModel.setStatus(request.isStatus());
+            examModel.setCountdown(request.getCountdown());
             if(!StringUtil.isListEmpty(request.getThumbnail())) {
                 String image = (String) request.getThumbnail().get(0).getResponse()
                         .getOrDefault("default", null);
@@ -149,5 +163,10 @@ public class ExamServiceImpl implements ExamService {
 
         ExamPartModel examPartModel = examPartRepository.getByPartIdAndExamModel(partId, opExam.get());
         examPartRepository.delete(examPartModel);
+    }
+
+    @Override
+    public Object getAllExam(ExamRequest examRequest) {
+        return examRepository.getAllExam(examRequest);
     }
 }

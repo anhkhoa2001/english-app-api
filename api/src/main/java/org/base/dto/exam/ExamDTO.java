@@ -23,4 +23,6 @@ public class ExamDTO {
     private String type;
 
     private List<FileDTO> thumbnail;
+
+    private int countdown;
 }

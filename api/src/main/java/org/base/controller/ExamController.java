@@ -3,6 +3,7 @@ package org.base.controller;
 import lombok.extern.slf4j.Slf4j;
 import org.base.config.EnableWrapResponse;
 import org.base.dto.exam.ExamDTO;
+import org.base.dto.exam.ExamRequest;
 import org.base.exception.SystemException;
 import org.base.model.exam.ExamModel;
 import org.base.services.ExamService;
@@ -54,5 +55,10 @@ public class ExamController {
            log.error("Failed when delete part in exam {} {}", e.getClass(), e.getMessage());
            throw new SystemException(e.getMessage());
        }
+    }
+
+    @PostMapping("/get-all-exam")
+    public ResponseEntity getAllExam(@RequestBody ExamRequest request) {
+        return ResponseEntity.ok(examService.getAllExam(request));
     }
 }

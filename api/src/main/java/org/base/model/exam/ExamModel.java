@@ -49,6 +49,9 @@ public class ExamModel {
     @Column(name = "ATTENDENCES", nullable = false)
     private int attendences;
 
+    @Column(name = "COUNTDOWN")
+    private int countdown;
+
     @OneToMany(mappedBy = "examModel", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<ExamPartModel> parts;
 }

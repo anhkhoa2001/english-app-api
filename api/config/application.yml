@@ -1,7 +1,5 @@
 server:
   port: 9001
-  servlet:
-    context-path: /api
 kong:
   gateway:
     port: 8000
@@ -29,7 +27,7 @@ secret:
 spring:
   datasource:
     password: zkU4xyjQNLCTO4EcllgmQfyOWPyeuFS1
-    url: jdbc:postgresql://dpg-cml5bl2cn0vc739natag-a.singapore-postgres.render.com:5432/user_y053?currentSchema=user
+    url: jdbc:postgresql://dpg-cml5bl2cn0vc739natag-a.singapore-postgres.render.com:5432/user_y053?currentSchema=english-app
     #url: jdbc:postgresql://localhost:5432/postgres?currentSchema=english-app
     username: khoadamtam
     #password: 1
@@ -43,8 +41,11 @@ spring:
     database-platform: org.hibernate.dialect.PostgreSQLDialect
     show-sql: true
   redis:
-    host: localhost
-    port: 6379
+    host: redis-10190.c281.us-east-1-2.ec2.cloud.redislabs.com
+    port: 10190
+    havePassword: YES
+    username: default
+    password: qNv8n4MafaURVPDZ03kaT5f1aWdTGZC4
   security:
     oauth2:
       client:
@@ -53,8 +54,8 @@ spring:
             client-id: d180a2c1fdb7f14108e1
             client-secret: 6144aea24b43dcda66725c3a02b2f4665977d26f
           google:
-            client-id: 888434469215-q6d7ck80da35b9g45qrkc9s5bvpm0s5c.apps.googleusercontent.com
-            client-secret: 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
+            client-id: 701424571214-ma0tka7ntifmjvel7eocob775thbkkjg.apps.googleusercontent.com
+            client-secret: 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
           facebook:
             client-id: 3345241832432650
             client-secret: 74dae8859a9acee9f44c60dcd94f402b
