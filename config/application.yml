@@ -1,0 +1,91 @@
+socket-server:
+  port: 9008
+  host: localhost
+kong:
+  gateway:
+    port: 8000
+    host: http://localhost
+    checkHost: NO
+  fe:
+    port: 5173
+    host: http://localhost
+    checkHost: NO
+  url:
+    create-user: http://localhost:8000/api/user/save-or-update
+  api-key: u28ioA0jsgAbgLqVSNZ5I90lJPMgzcki
+
+#logging:
+#  level:
+#    org:
+#      springframework:
+#        security: DEBUG
+
+#thoi gian cua token la 3h
+secret:
+  key: MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQDjrOOSzmnZkvqyTMj79MWRr15Q4fSdottj53i3WgUONNsglt5zdH0XMCYo9YqcrWorzleuuVn1XFoX+ujZolY9dRPz93JeCLJSnHzOAS+/UFO1iCu4kTAdQW32ME2vbmqhf4MYlVcDRdd8V/dOODHzd0bHjqMGR5Hglbf9v8oZQIDAQAB
+  time_live: 18000000
+
+spring:
+  datasource:
+    password: zkU4xyjQNLCTO4EcllgmQfyOWPyeuFS1
+    url: jdbc:postgresql://dpg-cml5bl2cn0vc739natag-a.singapore-postgres.render.com:5432/user_y053?currentSchema=english-app
+    #url: jdbc:postgresql://localhost:5432/postgres?currentSchema=english-app
+    username: khoadamtam
+    #password: 1
+    driver-class-name: org.postgresql.Driver
+  jpa:
+    hibernate:
+      ddl-auto: update
+      naming:
+        implicit-strategy: org.hibernate.boot.model.naming.ImplicitNamingStrategyLegacyJpaImpl
+        physical-strategy: org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
+    show-sql: true
+  redis:
+    host: redis-10190.c281.us-east-1-2.ec2.cloud.redislabs.com
+    port: 10190
+    havePassword: YES
+    username: default
+    password: qNv8n4MafaURVPDZ03kaT5f1aWdTGZC4
+  security:
+    oauth2:
+      client:
+        registration:
+          github:
+            client-id: d180a2c1fdb7f14108e1
+            client-secret: 6144aea24b43dcda66725c3a02b2f4665977d26f
+          google:
+            client-id: 701424571214-ma0tka7ntifmjvel7eocob775thbkkjg.apps.googleusercontent.com
+            client-secret: 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
+          facebook:
+            client-id: 3345241832432650
+            client-secret: 74dae8859a9acee9f44c60dcd94f402b
+            scope:
+              - email
+              - public_profile
+        provider:
+          facebook:
+            user-info-uri: https://graph.facebook.com/v18.0/me?fields=name_format,id,email,first_name,middle_name,last_name,name,verified,picture.width(250).height(250)
+
+  #config s3
+  amazon:
+    s3:
+      region: sgn09
+      id: 00f96b3466c8bb516030
+      access_key: I53Vddwa/gIi2B6Psbo0M+TtCchZGX9Xd0rh1KS2
+      url_server: https://s3-sgn09.fptcloud.com
+      url: https://${s3_bucket_name}.s3-sgn09.fptcloud.com/
+s3_bucket_name: admin-s3-test
+spring.servlet.multipart.max-file-size: 1000MB
+spring.servlet.multipart.max-request-size: 1000MB
+
+
+#config azure
+azure:
+  storage:
+    container:
+      name: course
+    file-share:
+      name: english-app
+    connection:
+      string: DefaultEndpointsProtocol=https;AccountName=englishappone;AccountKey=7pbtKhYvhuHj1jdKUCtXDKz+xEduFyfHgKOxLUo517mXJYR/PWVsNRJlgBuHnAXZhEaaZt9l77+E+AStIp9NMQ==;EndpointSuffix=core.windows.net

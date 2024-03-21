@@ -12,7 +12,8 @@
     <module>core</module>
     <module>test</module>
     <module>api</module>
-      <module>socket</module>
+    <module>socket</module>
+    <module>authentication</module>
   </modules>
 
 

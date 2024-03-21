@@ -3,9 +3,9 @@ package org.base.services.impl;
 import io.jsonwebtoken.Claims;
 import org.base.config.JwtTokenSetup;
 import org.base.dto.UserDTO;
-import org.base.model.UserModel;
-import org.base.repositories.UserRepository;
-import org.base.repositories.cache.TokenCacheRepository;
+import org.base.entity.UserModel;
+import org.base.repo.UserRepository;
+import org.base.repo.cache.TokenCacheRepository;
 import org.base.services.UserService;
 import org.base.utils.Constants;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,7 +21,7 @@ import java.util.UUID;
 public class UserServiceImpl implements UserService {
 
     @Autowired
-    private TokenCacheRepository  tokenCacheRepo;
+    private TokenCacheRepository tokenCacheRepo;
 
     @Autowired
     private JwtTokenSetup jwtTokenSetup;

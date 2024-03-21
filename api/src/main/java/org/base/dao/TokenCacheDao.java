@@ -1,7 +1,7 @@
 
 package org.base.dao;
 
-import org.base.model.cache.TokenCache;
+import org.base.entity.cache.TokenCache;
 
 import java.util.List;
 

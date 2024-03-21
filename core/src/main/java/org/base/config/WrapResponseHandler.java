@@ -13,7 +13,7 @@ import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseBodyAdvice;
 
-@RestControllerAdvice(basePackages = {"org.base"})
+@RestControllerAdvice(basePackages = {"org.base", "org.example"})
 @EnableWebMvc
 public class WrapResponseHandler extends HandlerInterceptorAdapter implements ResponseBodyAdvice<Object> {
 

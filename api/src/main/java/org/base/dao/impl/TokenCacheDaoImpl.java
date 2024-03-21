@@ -2,7 +2,7 @@
 package org.base.dao.impl;
 
 import org.base.dao.TokenCacheDao;
-import org.base.model.cache.TokenCache;
+import org.base.entity.cache.TokenCache;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
