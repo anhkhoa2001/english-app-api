@@ -4,6 +4,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.base.config.EnableWrapResponse;
 import org.base.dto.exam.ExamDTO;
 import org.base.dto.exam.ExamRequest;
+import org.base.dto.exam.ExamSubmitDTO;
 import org.base.exception.SystemException;
 import org.base.model.exam.ExamModel;
 import org.base.services.ExamService;
@@ -57,8 +58,17 @@ public class ExamController {
        }
     }
 
-    @PostMapping("/get-all-exam")
+    @PostMapping("/get-all-exam-public")
     public ResponseEntity getAllExam(@RequestBody ExamRequest request) {
         return ResponseEntity.ok(examService.getAllExam(request));
     }
+
+    @PostMapping("/to-examine")
+    public ResponseEntity toExamine(@RequestBody ExamSubmitDTO request) {
+        return ResponseEntity.ok("DONE!!");
+    }
+    /*@PostMapping("/get-all-exam-public")
+    public ResponseEntity getAllExam(@RequestBody ExamRequest request) {
+        return ResponseEntity.ok(examService.getAllExam(request));
+    }*/
 }

@@ -3,24 +3,21 @@ package org.base.services.impl;
 import lombok.extern.slf4j.Slf4j;
 import org.base.dto.exam.ExamDTO;
 import org.base.dto.exam.ExamRequest;
+import org.base.dto.exam.ExamSubmitDTO;
 import org.base.exception.SystemException;
 import org.base.exception.ValidationException;
-import org.base.model.exam.ExamModel;
-import org.base.model.exam.ExamPartModel;
-import org.base.model.exam.QuestionModel;
+import org.base.model.exam.*;
 import org.base.repositories.ExamPartRepository;
 import org.base.repositories.ExamRepository;
 import org.base.services.ExamService;
+import org.base.utils.Constants;
 import org.base.utils.StringUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.Date;
-import java.util.Optional;
+import java.util.*;
 
 @Service
 @Slf4j
@@ -51,6 +48,7 @@ public class ExamServiceImpl implements ExamService {
             examModel.setCreateAt(new Date());
             examModel.setStatus(request.isStatus());
             examModel.setCountdown(request.getCountdown());
+            examModel.setTotalQuestion(0);
             if(!StringUtil.isListEmpty(request.getThumbnail())) {
                 String image = (String) request.getThumbnail().get(0).getResponse()
                         .getOrDefault("default", null);
@@ -168,5 +166,27 @@ public class ExamServiceImpl implements ExamService {
     @Override
     public Object getAllExam(ExamRequest examRequest) {
         return examRepository.getAllExam(examRequest);
+    }
+
+    @Override
+    public Object toExamine(ExamSubmitDTO request) {
+        Optional<ExamModel> opExam = examRepository.findById(request.getExamCode());
+
+        if(opExam.isEmpty()) {
+            throw new ValidationException("exam code is not exist!!!");
+        }
+        ExamHistoryModel his = new ExamHistoryModel();
+        List<QuestionItemModel> questions = new ArrayList<>();
+        ExamModel exam = request.getExam();
+        for(ExamPartModel part : exam.getParts()) {
+            for(QuestionModel ques:part.getQuestions()) {
+                questions.addAll(ques.getQuestionChilds());
+            }
+        }
+
+        for(QuestionItemModel question:questions) {
+
+        }
+        return null;
     }
 }

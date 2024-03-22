@@ -42,4 +42,7 @@ public class QuestionItemModel {
     @JoinColumn(name = "question_id")
     @JsonIgnore
     private QuestionModel questionModel;
+
+    @Transient
+    private String output;
 }

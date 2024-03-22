@@ -45,13 +45,15 @@ public class QuestionServiceImpl implements QuestionService {
         if(opExam.isEmpty()) {
             throw new ValidationException("exam code does not exist!!!!");
         }
-        List<ExamPartModel> examParts = opExam.get().getParts();
+        ExamModel examModel = opExam.get();
+        List<ExamPartModel> examParts = examModel.getParts();
         examParts = examParts.stream().filter(e -> e.getPartId().equals(request.getPart())).collect(Collectors.toList());
 
         ExamPartModel examPartUseful = null;
         if(examParts.isEmpty()) {
             examPartUseful = new ExamPartModel();
             examPartUseful.setPartId(request.getPart());
+            examPartUseful.setPartPoint(request.getPartPoint());
             examPartUseful.setExamModel(opExam.get());
 
             examPartUseful = examPartRepository.save(examPartUseful);
@@ -98,6 +100,11 @@ public class QuestionServiceImpl implements QuestionService {
             return questionItem;
         }).collect(Collectors.toList());
 
+        //update total question
+        examModel.setTotalQuestion(examModel.getTotalQuestion() + questionItems.size());
+        examRepository.save(examModel);
+
+        //update question
         questionModel.setQuestionChilds(questionItems);
         return questionModel;
     }
@@ -109,6 +116,7 @@ public class QuestionServiceImpl implements QuestionService {
         if(opExam.isEmpty()) {
             throw new ValidationException("exam code does not exist!!!!");
         }
+        ExamModel examModel = opExam.get();
         List<ExamPartModel> examParts = opExam.get().getParts();
         examParts = examParts.stream().filter(e -> e.getPartId().equals(request.getPart())).collect(Collectors.toList());
 
@@ -116,6 +124,7 @@ public class QuestionServiceImpl implements QuestionService {
         if(examParts.isEmpty()) {
             examPartUseful = new ExamPartModel();
             examPartUseful.setPartId(request.getPart());
+            examPartUseful.setPartPoint(request.getPartPoint());
             examPartUseful.setExamModel(opExam.get());
 
             examPartUseful = examPartRepository.save(examPartUseful);
@@ -133,7 +142,9 @@ public class QuestionServiceImpl implements QuestionService {
         questionModel.setContent(request.getContent());
         questionModel.setType(request.getType());
 
-        questionItemRepository.deleteAllById(questionModel.getQuestionChilds().stream().map(QuestionItemModel::getItem_id).collect(Collectors.toList()));
+        List<Integer> questionItemOld = questionModel.getQuestionChilds().stream().map(QuestionItemModel::getItem_id).collect(Collectors.toList());
+        questionItemRepository.deleteAllById(questionItemOld);
+
         QuestionModel finalQuestionModel = questionModel;
         List<QuestionItemModel> questionItems = request.getQuestions().stream().map(q -> {
             QuestionItemModel questionItem = new QuestionItemModel();
@@ -164,6 +175,9 @@ public class QuestionServiceImpl implements QuestionService {
 
             return questionItem;
         }).collect(Collectors.toList());
+
+        examModel.setTotalQuestion(examModel.getTotalQuestion() - questionItemOld.size() + questionItems.size());
+        examRepository.save(examModel);
 
         questionModel.setQuestionChilds(questionItems);
         questionModel = questionRepository.save(questionModel);

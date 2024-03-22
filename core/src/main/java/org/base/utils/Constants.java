@@ -39,6 +39,12 @@ public class Constants {
         String AUDIO = "audio";
     }
 
+    public interface TYPE_QUESTION_ITEM {
+        String SINGLE = "Single";
+
+        String GROUP = "Group";
+    }
+
     public interface SERVICE {
 
         interface  USER {

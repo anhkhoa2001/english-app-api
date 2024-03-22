@@ -15,6 +15,7 @@ public class QuestionDTO {
     private Integer questionId;
     private String examCode;
     private int part;
+    private int partPoint;
     private String content;
     private String type;
     private List<QuestionItemDTO> questions;

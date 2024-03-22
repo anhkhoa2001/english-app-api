@@ -8,7 +8,7 @@ import org.springframework.context.annotation.Configuration;
 public class ConfigPort implements WebServerFactoryCustomizer<ConfigurableServletWebServerFactory> {
 
     public void customize(ConfigurableServletWebServerFactory factory){
-        factory.setPort(9001);
+        factory.setPort(9998);
     }
 
 }
