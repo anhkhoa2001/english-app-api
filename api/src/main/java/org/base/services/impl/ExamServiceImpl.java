@@ -191,6 +191,11 @@ public class ExamServiceImpl implements ExamService {
     }
 
     @Override
+    public Object getExamByCondition(ExamRequest examRequest) {
+        return examRepository.getExamByCondition(examRequest);
+    }
+
+    @Override
     public void toExamine(ExamSubmitDTO request, String token) {
         try {
             String userCreate = jwtTokenSetup.getUserIdFromToken(token);

@@ -21,5 +21,7 @@ public interface ExamService {
 
     Object getAllExam(ExamRequest examRequest);
 
+    Object getExamByCondition(ExamRequest examRequest);
+
     void toExamine(ExamSubmitDTO request, String token);
 }

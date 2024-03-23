@@ -6,4 +6,6 @@ import org.springframework.stereotype.Repository;
 public interface ExamDao {
 
     Object getAllExam(ExamRequest request);
+
+    Object getExamByCondition(ExamRequest examRequest);
 }

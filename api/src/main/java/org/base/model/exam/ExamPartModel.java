@@ -36,4 +36,11 @@ public class ExamPartModel {
     @OneToOne(mappedBy = "examModel")
     @JsonIgnore
     private LessonModel lessonModel;
+
+    @Transient
+    private String examCode;
+
+    public String getExamCode() {
+        return examModel != null ? examModel.getExamCode() : null;
+    }
 }

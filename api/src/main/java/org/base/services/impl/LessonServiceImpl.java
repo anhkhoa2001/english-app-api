@@ -60,15 +60,16 @@ public class LessonServiceImpl implements LessonService {
 
             LessonModel lessonModel = new LessonModel();
             lessonModel.setType(dto.getType());
-            if(dto.getType().equals("minitest")) {
+            if(dto.getType().equals("Minitest")) {
                 ExamPartModel examPartModel = examPartRepository.findById(dto.getExamPartId()).orElseGet(null);
                 lessonModel.setExamModel(examPartModel);
             } else {
-                lessonModel.setDescription(dto.getDes());
+
                 lessonModel.setStatus(dto.isStatus());
                 lessonModel.setThumbnail(fileDao.getUrlInFile(dto.getThumbnail()));
                 lessonModel.setUrl_video(fileDao.getUrlInFile(dto.getVideo()));
             }
+            lessonModel.setDescription(dto.getDescription());
             lessonModel.setCreateAt(new Date());
             lessonModel.setSectionModel(opSec.get());
             lessonModel.setLessionName(dto.getLessonName());
@@ -123,17 +124,25 @@ public class LessonServiceImpl implements LessonService {
             if(opSec.isEmpty()) {
                 throw new SystemException("lesson code not exist!!!");
             }
-            LessonModel lessonModel = lessonRepository.getByLessionNameAndSectionR(dto.getLessonName(), dto.getSectionId());
-            if(lessonModel == null) {
+            Optional<LessonModel> opLes = lessonRepository.findById(dto.getLessonId());
+            if(opLes.isEmpty()) {
                 throw new SystemException("Lesson already not exist!!");
             }
 
-            lessonModel.setDescription(dto.getDes());
-            lessonModel.setLessionName(dto.getLessonName());
-            lessonModel.setStatus(dto.isStatus());
-            lessonModel.setThumbnail(fileDao.getUrlInFile(dto.getThumbnail()));
-            lessonModel.setUrl_video(fileDao.getUrlInFile(dto.getVideo()));
+            LessonModel lessonModel = opLes.get();
+
+            if(dto.getType().equals("Minitest")) {
+                ExamPartModel examPartModel = examPartRepository.findById(dto.getExamPartId()).orElseGet(null);
+                lessonModel.setExamModel(examPartModel);
+            } else {
+                lessonModel.setStatus(dto.isStatus());
+                lessonModel.setThumbnail(fileDao.getUrlInFile(dto.getThumbnail()));
+                lessonModel.setUrl_video(fileDao.getUrlInFile(dto.getVideo()));
+            }
+            lessonModel.setDescription(dto.getDescription());
+            lessonModel.setCreateAt(new Date());
             lessonModel.setSectionModel(opSec.get());
+            lessonModel.setLessionName(dto.getLessonName());
 
             lessonModel = lessonRepository.save(lessonModel);
 
@@ -141,7 +150,7 @@ public class LessonServiceImpl implements LessonService {
         } catch (Exception e) {
             log.error("Occur error when update lesson!!!");
             log.error("{} | {}", e.getClass(), e.getMessage());
-
+            e.printStackTrace();
             throw new SystemException(e.getMessage());
         }
     }

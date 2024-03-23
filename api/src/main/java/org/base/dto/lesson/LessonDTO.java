@@ -14,7 +14,8 @@ public class LessonDTO {
     private String sectionName;
     private String lessonName;
     private boolean status;
-    private String des;
+    private String description;
+    private int lessonId;
 
     //lesson
     //minitest

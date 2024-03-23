@@ -53,4 +53,7 @@ public class LessonModel {
     @Transient
     private Integer section_id;
 
+    public Integer getSection_id() {
+        return sectionModel != null ? sectionModel.getSection_id() : null;
+    }
 }

@@ -64,6 +64,14 @@ public class ExamController {
         return ResponseEntity.ok(examService.getAllExam(request));
     }
 
+
+    @PostMapping("/get-exam-by-condition")
+    public ResponseEntity getExamByCondition(@RequestBody ExamRequest request) {
+        return ResponseEntity.ok(examService.getExamByCondition(request));
+    }
+
+
+
     @PostMapping("/to-examine")
     public ResponseEntity toExamine(@RequestBody ExamSubmitDTO request,
                                     @RequestHeader("Authorization") String token) {
