@@ -53,7 +53,6 @@ public class QuestionServiceImpl implements QuestionService {
         if(examParts.isEmpty()) {
             examPartUseful = new ExamPartModel();
             examPartUseful.setPartId(request.getPart());
-            examPartUseful.setPartPoint(request.getPartPoint());
             examPartUseful.setExamModel(opExam.get());
 
             examPartUseful = examPartRepository.save(examPartUseful);
@@ -124,7 +123,6 @@ public class QuestionServiceImpl implements QuestionService {
         if(examParts.isEmpty()) {
             examPartUseful = new ExamPartModel();
             examPartUseful.setPartId(request.getPart());
-            examPartUseful.setPartPoint(request.getPartPoint());
             examPartUseful.setExamModel(opExam.get());
 
             examPartUseful = examPartRepository.save(examPartUseful);

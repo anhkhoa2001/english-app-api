@@ -1,12 +1,15 @@
 package org.base.services.impl;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
+import org.base.config.JwtTokenSetup;
 import org.base.dto.exam.ExamDTO;
 import org.base.dto.exam.ExamRequest;
 import org.base.dto.exam.ExamSubmitDTO;
 import org.base.exception.SystemException;
 import org.base.exception.ValidationException;
 import org.base.model.exam.*;
+import org.base.repositories.ExamHistoryRepository;
 import org.base.repositories.ExamPartRepository;
 import org.base.repositories.ExamRepository;
 import org.base.services.ExamService;
@@ -23,15 +26,33 @@ import java.util.*;
 @Slf4j
 public class ExamServiceImpl implements ExamService {
 
-    @Autowired
-    private ExamRepository examRepository;
+    private final ExamRepository examRepository;
+
+    private final ExamPartRepository examPartRepository;
+
+    private final JwtTokenSetup jwtTokenSetup;
+
+    private final ObjectMapper objectMapper;
+
+    private final ExamHistoryRepository examHistoryRepository;
 
     @Autowired
-    private ExamPartRepository examPartRepository;
+    public ExamServiceImpl(ExamRepository examRepository,
+                           ExamPartRepository examPartRepository,
+                           JwtTokenSetup jwtTokenSetup,
+                           ObjectMapper objectMapper,
+                           ExamHistoryRepository examHistoryRepository) {
+        this.examRepository = examRepository;
+        this.examPartRepository = examPartRepository;
+        this.jwtTokenSetup = jwtTokenSetup;
+        this.objectMapper = objectMapper;
+        this.examHistoryRepository = examHistoryRepository;
+    }
 
     @Override
-    public ExamModel create(ExamDTO request) {
+    public ExamModel create(ExamDTO request, String token) {
         try {
+            String userCreate = jwtTokenSetup.getUserIdFromToken(token);
             Optional<ExamModel> op = examRepository.findById(request.getExamCode());
 
             if(op.isPresent()) {
@@ -49,6 +70,7 @@ public class ExamServiceImpl implements ExamService {
             examModel.setStatus(request.isStatus());
             examModel.setCountdown(request.getCountdown());
             examModel.setTotalQuestion(0);
+            examModel.setCreateBy(userCreate);
             if(!StringUtil.isListEmpty(request.getThumbnail())) {
                 String image = (String) request.getThumbnail().get(0).getResponse()
                         .getOrDefault("default", null);
@@ -169,24 +191,47 @@ public class ExamServiceImpl implements ExamService {
     }
 
     @Override
-    public Object toExamine(ExamSubmitDTO request) {
-        Optional<ExamModel> opExam = examRepository.findById(request.getExamCode());
+    public void toExamine(ExamSubmitDTO request, String token) {
+        try {
+            String userCreate = jwtTokenSetup.getUserIdFromToken(token);
+            Optional<ExamModel> opExam = examRepository.findById(request.getExamCode());
 
-        if(opExam.isEmpty()) {
-            throw new ValidationException("exam code is not exist!!!");
-        }
-        ExamHistoryModel his = new ExamHistoryModel();
-        List<QuestionItemModel> questions = new ArrayList<>();
-        ExamModel exam = request.getExam();
-        for(ExamPartModel part : exam.getParts()) {
-            for(QuestionModel ques:part.getQuestions()) {
-                questions.addAll(ques.getQuestionChilds());
+            if(opExam.isEmpty()) {
+                throw new ValidationException("exam code is not exist!!!");
             }
-        }
+            ExamHistoryModel his = new ExamHistoryModel();
+            List<QuestionItemModel> questions = new ArrayList<>();
+            ExamModel exam = request.getExam();
+            for(ExamPartModel part : exam.getParts()) {
+                for(QuestionModel ques:part.getQuestions()) {
+                    questions.addAll(ques.getQuestionChilds());
+                }
+            }
 
-        for(QuestionItemModel question:questions) {
+            his.setImplementer(userCreate);
+            his.setCreateTime(new Date());
+            his.setExecuteTime(request.getExecuteTime());
+            his.setExamCode(request.getExamCode());
+            his.setJson(objectMapper.writeValueAsString(request.getExam()));
 
+            int countTrue = 0;
+            for(QuestionItemModel question:questions) {
+                if(question.getOutput() != null) {
+                    String solution = question.getSolution().trim().toLowerCase();
+                    String output = question.getOutput().trim().toLowerCase();
+
+                    countTrue = solution.equals(output) ? ++countTrue : countTrue;
+                }
+            }
+            his.setResult(countTrue + "/" + exam.getTotalQuestion());
+
+            examHistoryRepository.save(his);
+
+            return;
+        } catch (Exception e) {
+            log.error("examine failed {} {}", e.getClass(), e.getMessage());
+            e.printStackTrace();
+            throw new SystemException(e.getCause().toString());
         }
-        return null;
     }
 }

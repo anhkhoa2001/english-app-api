@@ -7,7 +7,7 @@ import org.base.model.exam.ExamModel;
 
 public interface ExamService {
 
-    ExamModel create(ExamDTO request);
+    ExamModel create(ExamDTO request, String token);
 
     Object getAll();
 
@@ -21,5 +21,5 @@ public interface ExamService {
 
     Object getAllExam(ExamRequest examRequest);
 
-    Object toExamine(ExamSubmitDTO request);
+    void toExamine(ExamSubmitDTO request, String token);
 }

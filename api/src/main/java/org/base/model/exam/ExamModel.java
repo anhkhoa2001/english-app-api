@@ -55,9 +55,6 @@ public class ExamModel {
     @Column(name = "TOTAL_QUESTION")
     private int totalQuestion;
 
-    @Column(name = "TARGET")
-    private int target;
-
     @OneToMany(mappedBy = "examModel", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<ExamPartModel> parts;
 }

@@ -39,7 +39,4 @@ public class ExamHistoryModel {
 
     @Column(name = "RESULT")
     private String result;
-
-    @Column(name = "POINT")
-    private int point;
 }

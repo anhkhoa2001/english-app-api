@@ -15,4 +15,5 @@ public class ExamSubmitDTO {
 
     private String examCode;
     private ExamModel exam;
+    private int executeTime;
 }

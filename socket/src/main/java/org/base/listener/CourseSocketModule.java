@@ -6,6 +6,7 @@ import com.corundumstudio.socketio.listener.ConnectListener;
 import com.corundumstudio.socketio.listener.DataListener;
 import com.corundumstudio.socketio.listener.DisconnectListener;
 import lombok.extern.slf4j.Slf4j;
+import org.base.config.CommonConfig;
 import org.base.config.InitialCollection;
 import org.base.model.CommentModel;
 import org.base.service.SocketService;
@@ -41,7 +42,7 @@ public class CourseSocketModule {
         return (senderClient, data, ackSender) -> {
             try {
                 String clientId = senderClient.getSessionId().toString();
-                String userId = InitialCollection.mapping.get(clientId);
+                String userId = CommonConfig.mapping.get(clientId);
                 data.setSender(userId);
                 data.setSendTime(new Date());
 
@@ -64,7 +65,7 @@ public class CourseSocketModule {
                 String userId = params.get("sender").stream().collect(Collectors.joining());
                 String sessionId = client.getSessionId().toString();
 
-                InitialCollection.mapping.put(sessionId, userId);
+                CommonConfig.mapping.put(sessionId, userId);
                 client.joinRoom(refId + entityRef);
                 log.info("Client {} join to chat room {} {}", userId, refId, entityRef);
             } catch (Exception e) {
@@ -82,7 +83,7 @@ public class CourseSocketModule {
             String entityRef = params.get("entityRef").stream().collect(Collectors.joining());
             String sessionId = client.getSessionId().toString();
             client.leaveRoom(refId + entityRef);
-            InitialCollection.mapping.remove(sessionId);
+            CommonConfig.mapping.remove(sessionId);
         };
     }
 }

@@ -10,7 +10,6 @@ import java.util.Map;
 @Slf4j
 public class InitialCollection {
 
-    //mapping session id cua client va user id
-    public static final Map<String, String> mapping = new HashMap<>();
+
 
 }

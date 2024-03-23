@@ -22,9 +22,6 @@ public class ExamPartModel {
     @Column(name = "PART_ID")
     private Integer partId;
 
-    @Column(name = "PART_POINT")
-    private int partPoint;
-
     @ManyToOne
     @JoinColumn(name="EXAM_CODE", nullable=false)
     @JsonIgnore

@@ -22,8 +22,9 @@ public class ExamController {
     private ExamService examService;
 
     @PostMapping("/create")
-    public ResponseEntity create(@RequestBody ExamDTO request) {
-        return ResponseEntity.ok(examService.create(request));
+    public ResponseEntity create(@RequestBody ExamDTO request,
+                                 @RequestHeader("Authorization") String token) {
+        return ResponseEntity.ok(examService.create(request, token));
     }
 
     @GetMapping("/get-all")
@@ -64,11 +65,9 @@ public class ExamController {
     }
 
     @PostMapping("/to-examine")
-    public ResponseEntity toExamine(@RequestBody ExamSubmitDTO request) {
+    public ResponseEntity toExamine(@RequestBody ExamSubmitDTO request,
+                                    @RequestHeader("Authorization") String token) {
+        examService.toExamine(request, token);
         return ResponseEntity.ok("DONE!!");
     }
-    /*@PostMapping("/get-all-exam-public")
-    public ResponseEntity getAllExam(@RequestBody ExamRequest request) {
-        return ResponseEntity.ok(examService.getAllExam(request));
-    }*/
 }
