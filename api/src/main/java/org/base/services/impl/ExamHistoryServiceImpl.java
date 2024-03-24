@@ -1,11 +1,10 @@
 package org.base.services.impl;
 
 import org.base.config.JwtTokenSetup;
+import org.base.dto.exam.ExamHistoryDTO;
 import org.base.repositories.ExamHistoryRepository;
 import org.base.services.ExamHistoryService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -22,8 +21,18 @@ public class ExamHistoryServiceImpl implements ExamHistoryService {
     }
 
     @Override
-    public Object getAll(String token, Integer page, Integer pageSize) {
+    public Object getAll(String token, String examCode, Integer page, Integer pageSize) {
         String userId = jwtTokenSetup.getUserIdFromToken(token);
-        return examHistoryRepository.findAllByImplementerAnd(userId);
+        return examHistoryRepository.findAllByImplementerAndExamCode(userId, examCode);
+    }
+
+    @Override
+    public Object getByCondition(ExamHistoryDTO request) {
+        return examHistoryRepository.getByCondition(request);
+    }
+
+    @Override
+    public Object getByHistoryId(Integer historyId) {
+        return examHistoryRepository.findById(historyId).get();
     }
 }

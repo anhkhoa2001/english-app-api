@@ -34,8 +34,9 @@ public class CourseServiceImpl implements CourseService {
     private StudentOfCourseRepository studentOfCourseRepository;
 
     @Override
-    public CourseModel create(CourseItemDTO item) {
+    public CourseModel create(CourseItemDTO item, String token) {
         try {
+            String userId = jwtTokenSetup.getUserIdFromToken(token);
             Optional<CourseModel> op = courseRepository.findById(item.getCourseCode());
 
             if(op.isPresent()) {
@@ -47,9 +48,7 @@ public class CourseServiceImpl implements CourseService {
             courseModel.setCourseName(item.getCourseName());
             courseModel.setDescription(item.getDescription());
             courseModel.setCreateAt(new Date());
-            //tam thoi chua co security
-            //de null
-            courseModel.setCreateBy(null);
+            courseModel.setCreateBy(userId);
             courseModel.setStatus(item.isStatus());
             courseModel.setPublic(item.isPublic());
             courseModel.setLevel(item.getLevel());
@@ -89,9 +88,6 @@ public class CourseServiceImpl implements CourseService {
             CourseModel courseModel = op.get();
             courseModel.setCourseName(item.getCourseName());
             courseModel.setDescription(item.getDescription());
-            //tam thoi chua co security
-            //de null
-            courseModel.setCreateBy(null);
             courseModel.setStatus(item.isStatus());
             courseModel.setPublic(item.isPublic());
             courseModel.setLevel(item.getLevel());

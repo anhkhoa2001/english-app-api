@@ -8,7 +8,7 @@ import java.util.List;
 
 public interface CourseService {
 
-    CourseModel create(CourseItemDTO item);
+    CourseModel create(CourseItemDTO item, String token);
 
     List<CourseModel> getAll();
 

@@ -32,12 +32,14 @@ public class CourseController {
     }
 
     @PostMapping("/create")
-    public ResponseEntity createCourse(@RequestBody CourseItemDTO item) {
-        return ResponseEntity.ok(courseService.create(item));
+    public ResponseEntity createCourse(@RequestBody CourseItemDTO item,
+                                       @RequestHeader(name = "Authorization") String token) {
+        return ResponseEntity.ok(courseService.create(item, token));
     }
 
     @PostMapping("/update")
-    public ResponseEntity updateCourse(@RequestBody CourseItemDTO item) {
+    public ResponseEntity updateCourse(@RequestBody CourseItemDTO item,
+                                       @RequestHeader(name = "Authorization") String token) {
         return ResponseEntity.ok(courseService.update(item));
     }
 
