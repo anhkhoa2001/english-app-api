@@ -68,6 +68,6 @@ public class FilterChainFirst extends OncePerRequestFilter {
     }
 
     private boolean containsPattern(String pattern1) {
-        return pattern1.contains("public") || pattern1.contains("up-file");
+        return pattern1.contains("public") || pattern1.contains("up-file") || pattern1.contains("blog/get-by-condition") || pattern1.contains("/favicon.ico");
     }
 }

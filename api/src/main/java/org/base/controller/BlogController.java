@@ -41,7 +41,7 @@ public class BlogController {
 
     @PostMapping("/get-by-condition")
     public ResponseEntity getByCondition(@RequestBody BlogRequest request,
-                                         @RequestHeader("Authorization") String token) {
-        return ResponseEntity.ok(blogService.getByCondition(request, token));
+                                         @RequestHeader(value = "Authorization", required = false) String token) {
+        return ResponseEntity.ok(blogService.getByCondition(request, null));
     }
 }

@@ -64,7 +64,6 @@ public class LessonServiceImpl implements LessonService {
                 ExamPartModel examPartModel = examPartRepository.findById(dto.getExamPartId()).orElseGet(null);
                 lessonModel.setExamModel(examPartModel);
             } else {
-
                 lessonModel.setStatus(dto.isStatus());
                 lessonModel.setThumbnail(fileDao.getUrlInFile(dto.getThumbnail()));
                 lessonModel.setUrl_video(fileDao.getUrlInFile(dto.getVideo()));

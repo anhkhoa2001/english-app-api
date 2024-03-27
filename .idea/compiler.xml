@@ -27,6 +27,7 @@
       <module name="english-app-api" target="1.8" />
       <module name="exam-service" target="11" />
       <module name="gateway" target="11" />
+      <module name="proxy" target="11" />
       <module name="user-service" target="11" />
     </bytecodeTargetLevel>
   </component>

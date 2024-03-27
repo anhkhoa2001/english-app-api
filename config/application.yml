@@ -27,10 +27,10 @@ secret:
 
 spring:
   datasource:
-    password: zkU4xyjQNLCTO4EcllgmQfyOWPyeuFS1
-    url: jdbc:postgresql://dpg-cml5bl2cn0vc739natag-a.singapore-postgres.render.com:5432/user_y053?currentSchema=english-app
+    password: 1
+    url: jdbc:postgresql://localhost:5432/kong?currentSchema=english-app
     #url: jdbc:postgresql://localhost:5432/postgres?currentSchema=english-app
-    username: khoadamtam
+    username: khoadt
     #password: 1
     driver-class-name: org.postgresql.Driver
   jpa:

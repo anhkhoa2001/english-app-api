@@ -4,20 +4,15 @@ Danh sách chức năng:
 1. Học viên
 - Đăng nhập, đăng ký dưới tư cách học viên
 - Quán lý khóa học online
-    + Đăng ký khóa học (Chưa tính đến việc trả phi)
+    + Đăng ký khóa học
     + Xem bài giảng, làm minitest thực hành
-    + Xếp hạng theo sao + thảo luận về khóa học
-    + Đề xuất khóa học phổ biến
-    + Theo dõi tiến độ của khóa học, kết quả minitest
+    + thảo luận về khóa học
 - Quản lý thư viện đề thi
     + Đăng ký đề thi
     + Thi online
     + Xếp hạng theo sao + thảo luận về đề thi
-- Quản lý thông tin người dùng
-    + Xem danh sách khóa học đã đăng ký
-    + Xem lịch sử  bài giảng gần nhất
-    + Xem lịch sử thi online
 - Quản lý thư viện tài liệu
+    + Thêm sửa xóa tài liệu
     + Xem online hoặc tải xuống tài liệu
     + Xếp hạng sao và đánh giá tài liệu
 - Quản lý blog
@@ -30,14 +25,11 @@ Danh sách chức năng:
     + Tham gia thảo luận về khóa học cùng học viên
 - Quản lý thư viện đề thi
     + Phân loại đề thi theo chủ đề, trình độ ...
-    + Thêm sửa xóa đề thi (Có thể import đề thi bằng pdf) + đáp án
+    + Thêm sửa xóa đề thi + đáp án
     + Xem lịch sử thi của từng học viên
-- Quản lý thông tin giảng viên
-    + Theo dõi số liệu của khóa học như số lượng học viên, xếp hạng sao...
-    + Theo dõi số liệu của đề thi như số lượt thi, xếp hạng sao...
 - Quản lý thư viện tài liệu
     + Chia sẻ tài liệu dưới dạng pdf
-    + Theo dõi lịch sử xem, tải xuống tài liệu
+    + tải xuống tài liệu
     + Thảo luận với học viên về tài liệu
 - Quản lý blog
     + Thêm sửa xóa blog
@@ -51,10 +43,10 @@ Danh sách chức năng:
 - Duyệt blog của học viên, giảng viên
 4. Một số tính năng nâng cao
 - Đánh giá khóa học, chat giữa các học viên (Sử dụng socket hoặc kafka để cho phép chat realtime)
-- Lưu trữ file lên cloud
+- Lưu trữ file lên aws
 - Đăng nhập bằng google, github
 
 
-**Công nghệ: Xây dựng theo kiến trúc microservices sử dụng message queue như rabbit hoặc kafka
+**Công nghệ:
 - FE: ReactJS
 - BE: Spring Boot + Database
